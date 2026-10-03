@@ -1,0 +1,489 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true"
+    CodeBehind="Site1.Master.cs"
+    Inherits="EduFlow.Site1" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+
+    <title>EduCRM Admin Dashboard</title>
+
+    <!-- Page-specific content placeholder -->
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect"
+        href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect"
+        href="https://fonts.googleapis.com"
+        crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <!-- Main CSS -->
+    <link href="<%= ResolveUrl("~/Content/admin-panel.css") %>"
+    rel="stylesheet"
+    type="text/css" />
+
+</head>
+
+<body>
+
+<form id="form1" runat="server">
+
+    <div class="app-layout">
+
+
+        <!-- ================================================= -->
+        <!-- LEFT SIDEBAR -->
+        <!-- ================================================= -->
+
+        <aside class="sidebar" id="sidebar">
+
+
+            <!-- ================================================= -->
+            <!-- LOGO -->
+            <!-- ================================================= -->
+
+            <div class="sidebar-logo">
+
+                <div class="logo-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div class="logo-text">
+
+                    <div class="logo-title">
+                        EduCRM
+                    </div>
+
+                    <div class="logo-subtitle">
+                        Admin Panel
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- SIDEBAR NAVIGATION -->
+            <!-- ================================================= -->
+
+            <nav class="sidebar-nav">
+
+
+                <!-- ================================================= -->
+                <!-- MAIN -->
+                <!-- ================================================= -->
+
+                <div class="menu-section">
+
+                    <div class="menu-heading">
+                        MAIN
+                    </div>
+
+
+                    <!-- DASHBOARD -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Dashboard.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-house"></i>
+
+                        <span>
+                            Dashboard
+                        </span>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- MANAGEMENT -->
+                <!-- ================================================= -->
+
+                <div class="menu-section">
+
+                    <div class="menu-heading">
+                        MANAGEMENT
+                    </div>
+
+
+                    <!-- INQUIRIES -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Inquiries.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-clipboard-list"></i>
+
+                        <span>
+                            Inquiries
+                        </span>
+
+                    </a>
+
+
+                    <!-- COUNSELING -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Counseling.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-user-tie"></i>
+
+                        <span>
+                            Counseling
+                        </span>
+
+                    </a>
+
+
+                    <!-- FOLLOW UPS -->
+
+                    <a href="<%= ResolveUrl("~/Admin/FollowUps.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-phone"></i>
+
+                        <span>
+                            Follow-ups
+                        </span>
+
+                    </a>
+
+
+                    <!-- APPLICATIONS -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Applications.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-file-lines"></i>
+
+                        <span>
+                            Applications
+                        </span>
+
+                    </a>
+
+
+                    <!-- STUDENTS -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Students.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-user-graduate"></i>
+
+                        <span>
+                            Students
+                        </span>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- SYSTEM -->
+                <!-- ================================================= -->
+
+                <div class="menu-section">
+
+                    <div class="menu-heading">
+                        SYSTEM
+                    </div>
+
+
+                    <!-- COURSES -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Courses.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-book"></i>
+
+                        <span>
+                            Courses
+                        </span>
+
+                    </a>
+
+
+                    <!-- USERS -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Users.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        <span>
+                            Users
+                        </span>
+
+                    </a>
+
+
+                    <!-- ROLES AND PERMISSIONS -->
+
+                    <a href="<%= ResolveUrl("~/Admin/RolesPermissions.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-user-shield"></i>
+
+                        <span>
+                            Roles &amp; Permissions
+                        </span>
+
+                    </a>
+
+
+                    <!-- REPORTS -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Reports.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-chart-column"></i>
+
+                        <span>
+                            Reports
+                        </span>
+
+                    </a>
+
+
+                    <!-- SETTINGS -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Settings.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-gear"></i>
+
+                        <span>
+                            Settings
+                        </span>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- ACCOUNT -->
+                <!-- ================================================= -->
+
+                <div class="menu-section">
+
+                    <div class="menu-heading">
+                        ACCOUNT
+                    </div>
+
+
+                    <!-- PROFILE -->
+
+                    <a href="<%= ResolveUrl("~/Admin/Profile.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-user"></i>
+
+                        <span>
+                            Profile
+                        </span>
+
+                    </a>
+
+
+                    <!-- CHANGE PASSWORD -->
+
+                    <a href="<%= ResolveUrl("~/Admin/ChangePassword.aspx") %>"
+                       class="menu-item">
+
+                        <i class="fa-solid fa-lock"></i>
+
+                        <span>
+                            Change Password
+                        </span>
+
+                    </a>
+
+                </div>
+
+
+            </nav>
+
+
+            <!-- ================================================= -->
+            <!-- ADMIN USER -->
+            <!-- ================================================= -->
+
+            <a href="<%= ResolveUrl("~/Admin/Profile.aspx") %>"
+   class="sidebar-user"
+   style="text-decoration:none; color:inherit; cursor:pointer;">
+
+    <div class="user-avatar">
+        <%= AdminInitials %>
+    </div>
+
+    <div class="user-details">
+
+        <div class="user-name">
+            <%= AdminName %>
+        </div>
+
+        <div class="user-role">
+            <%= AdminRole %>
+        </div>
+
+    </div>
+
+</a>
+
+
+        </aside>
+
+
+        <!-- ================================================= -->
+        <!-- RIGHT SIDE -->
+        <!-- ================================================= -->
+
+        <main class="main-content">
+
+
+            <!-- ================================================= -->
+            <!-- TOP BAR -->
+            <!-- ================================================= -->
+
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+
+                    <!-- MENU BUTTON -->
+
+                    <button type="button"
+                            class="sidebar-button">
+
+                        <i class="fa-solid fa-bars"></i>
+
+                    </button>
+
+
+                    <!-- SEARCH -->
+
+                    <div class="search-box">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input type="text"
+                               placeholder="Search students, inquiries, applications..." />
+
+                    </div>
+
+
+                </div>
+
+            </header>
+
+
+            <!-- ================================================= -->
+            <!-- PAGE CONTENT -->
+            <!-- ================================================= -->
+
+            <div class="page-content">
+
+                <asp:ContentPlaceHolder
+                    ID="ContentPlaceHolder1"
+                    runat="server">
+                </asp:ContentPlaceHolder>
+
+            </div>
+
+
+        </main>
+
+
+    </div>
+
+</form>
+
+
+<script type="text/javascript">
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var sidebar = document.getElementById("sidebar");
+
+        if (!sidebar) {
+            return;
+        }
+
+
+        /* =====================================================
+           RESTORE SIDEBAR POSITION
+           ===================================================== */
+
+        var savedScrollPosition =
+            sessionStorage.getItem("EduCRM_SidebarScroll");
+
+
+        if (savedScrollPosition !== null) {
+
+            sidebar.scrollTop =
+                parseInt(savedScrollPosition, 10);
+
+        }
+
+
+        /* =====================================================
+           SAVE POSITION WHEN A SIDEBAR LINK IS CLICKED
+           ===================================================== */
+
+        var sidebarLinks =
+            sidebar.querySelectorAll("a");
+
+
+        sidebarLinks.forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                sessionStorage.setItem(
+                    "EduCRM_SidebarScroll",
+                    sidebar.scrollTop
+                );
+
+            });
+
+        });
+
+
+        /* =====================================================
+           ALSO SAVE POSITION WHILE SIDEBAR IS SCROLLING
+           ===================================================== */
+
+        sidebar.addEventListener("scroll", function () {
+
+            sessionStorage.setItem(
+                "EduCRM_SidebarScroll",
+                sidebar.scrollTop
+            );
+
+        });
+
+    });
+
+</script>
+
+
+</body>
+</html>
