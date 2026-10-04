@@ -1,1405 +1,452 @@
-﻿<%@ Page Title="Student Management"
-    Language="C#"
-    MasterPageFile="~/Admin/Site1.Master"
-    AutoEventWireup="true"
-    CodeBehind="Students.aspx.cs"
-    Inherits="EduCRM.Students" %>
-
-<asp:Content ID="HeadContent"
-    ContentPlaceHolderID="head"
-    runat="server">
-
-    <style>
-
-        /* =====================================================
-           STUDENT MANAGEMENT PAGE
-           ===================================================== */
-
-        .students-page {
-            width: 100%;
-            min-height: calc(100vh - 70px);
-            padding: 20px 14px;
-            background: #F8FAFC;
-            font-family: 'Inter', Arial, sans-serif;
-            color: #1E293B;
-            box-sizing: border-box;
-        }
-
-        .students-page *,
-        .students-page *::before,
-        .students-page *::after {
-            box-sizing: border-box;
-        }
-
-
-        /* ================= HEADER ================= */
-
-        .students-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 17px;
-            gap: 15px;
-        }
-
-        .students-title h1 {
-            margin: 0 0 4px 0;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 25px;
-            font-weight: 600;
-            color: #172033;
-        }
-
-        .students-title p {
-            margin: 0;
-            color: #64748B;
-            font-size: 10px;
-        }
-
-
-        /* ================= VIEW BUTTONS ================= */
-
-        .student-view-buttons {
-            display: flex;
-            gap: 4px;
-            margin-top: 2px;
-        }
-
-        .student-view-btn {
-            border: none;
-            background: #EEF2FF;
-            color: #64748B;
-            padding: 7px 11px;
-            border-radius: 14px;
-            font-size: 9px;
-            font-family: 'Inter', Arial, sans-serif;
-            cursor: pointer;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                background 0.2s ease;
-        }
-
-        .student-view-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
-        }
-
-        .student-view-btn.active {
-            background: #4F46E5;
-            color: #FFFFFF;
-            box-shadow: 0 2px 6px rgba(79, 70, 229, .20);
-        }
-
-        .student-view-btn i {
-            margin-right: 4px;
-        }
-
-
-        /* ================= STATISTICS ================= */
-
-        .student-stats {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 9px;
-            margin-bottom: 16px;
-        }
-
-        .student-stat {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 9px;
-            padding: 13px;
-            min-height: 72px;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
-        }
-
-        .student-stat:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.10);
-            border-color: #C7D2FE;
-        }
-
-        .student-stat-content {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .student-stat-icon {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 13px;
-        }
-
-        .student-purple {
-            background: #EEF2FF;
-            color: #4F46E5;
-        }
-
-        .student-green {
-            background: #ECFDF3;
-            color: #22C55E;
-        }
-
-        .student-orange {
-            background: #FFF7E6;
-            color: #F59E0B;
-        }
-
-        .student-blue {
-            background: #EFF6FF;
-            color: #2563EB;
-        }
-
-        .student-stat-label {
-            font-size: 7px;
-            color: #64748B;
-            text-transform: uppercase;
-            letter-spacing: .4px;
-            margin-bottom: 3px;
-        }
-
-        .student-stat-number {
-            font-size: 18px;
-            line-height: 20px;
-            font-weight: 600;
-            color: #1E293B;
-        }
-
-
-        /* ================= FILTER BOX ================= */
-
-        .student-filter-box {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 9px;
-            padding: 13px;
-            margin-bottom: 9px;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
-        }
-
-        .student-filter-box:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
-            border-color: #C7D2FE;
-        }
-
-        .student-filters {
-            display: grid;
-            grid-template-columns: 1.7fr 1fr 1fr 1fr auto;
-            gap: 9px;
-            align-items: end;
-        }
-
-        .student-filter-field label {
-            display: block;
-            font-size: 7px;
-            color: #64748B;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-
-        .student-input,
-        .student-select {
-            width: 100%;
-            height: 29px;
-            padding: 0 9px;
-            border: 1px solid #E2E8F0;
-            border-radius: 5px;
-            background: #FFFFFF;
-            color: #475569;
-            font-size: 8px;
-            font-family: 'Inter', Arial, sans-serif;
-            outline: none;
-        }
-
-        .student-input:focus,
-        .student-select:focus {
-            border-color: #A5B4FC;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.06);
-        }
-
-        .student-reset {
-            height: 29px;
-            padding: 0 11px;
-            border: none;
-            border-radius: 5px;
-            background: #EEF2FF;
-            color: #4F46E5;
-            font-size: 8px;
-            font-family: 'Inter', Arial, sans-serif;
-            cursor: pointer;
-            white-space: nowrap;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                background 0.2s ease;
-        }
-
-        .student-reset:hover {
-            background: #E0E7FF;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
-        }
-
-        .student-reset i {
-            margin-right: 4px;
-        }
-
-
-        /* ================= TABLE ================= */
-
-        .student-table-wrapper {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 9px;
-            overflow: hidden;
-
-            transition:
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
-        }
-
-        .student-table-wrapper:hover {
-            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
-            border-color: #D8DEF0;
-        }
-
-        .student-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        .student-table th {
-            background: #F5F7FF;
-            color: #64748B;
-            font-size: 7px;
-            font-weight: 600;
-            text-transform: uppercase;
-            text-align: left;
-            padding: 9px 7px;
-            border-bottom: 1px solid #E2E8F0;
-            white-space: nowrap;
-        }
-
-        .student-table td {
-            padding: 9px 7px;
-            border-bottom: 1px solid #EEF2F6;
-            vertical-align: middle;
-            font-size: 8px;
-            color: #475569;
-        }
-
-        .student-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .student-table tbody tr {
-            transition: background 0.2s ease;
-        }
-
-        .student-table tbody tr:hover td {
-            background: #FAFBFF;
-        }
-
-
-        /* ================= STUDENT NAME ================= */
-
-        .student-name-cell {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .student-avatar {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #4F46E5;
-            color: #FFFFFF;
-            font-size: 7px;
-            font-weight: 600;
-            flex-shrink: 0;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-        .student-table tbody tr:hover .student-avatar {
-            transform: scale(1.08);
-            box-shadow: 0 3px 8px rgba(79, 70, 229, 0.20);
-        }
-
-        .student-name {
-            color: #334155;
-            font-size: 8px;
-            font-weight: 600;
-            line-height: 11px;
-        }
-
-        .student-reg {
-            display: block;
-            color: #94A3B8;
-            font-size: 6.5px;
-            font-weight: 400;
-        }
-
-
-        /* ================= STUDENT ID ================= */
-
-        .student-id {
-            color: #2563EB;
-            font-size: 8px;
-            font-weight: 600;
-        }
-
-
-        /* ================= ROLL NUMBER ================= */
-
-        .roll-number {
-            display: inline-block;
-            padding: 3px 6px;
-            border: 1px solid #E2E8F0;
-            border-radius: 4px;
-            color: #64748B;
-            font-size: 6.5px;
-            background: #FFFFFF;
-        }
-
-
-        /* ================= EMAIL ================= */
-
-        .contact-cell {
-            line-height: 11px;
-            font-size: 7px;
-        }
-
-        .contact-phone {
-            color: #334155;
-        }
-
-        .contact-email {
-            color: #94A3B8;
-            font-size: 6.5px;
-        }
-
-
-        /* ================= STATUS ================= */
-
-        .student-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 7px;
-            border-radius: 999px;
-            background: #ECFDF3;
-            color: #16A34A;
-            font-size: 6.5px;
-            font-weight: 600;
-        }
-
-        .student-status i {
-            font-size: 5px;
-        }
-
-
-        /* ================= ACTIONS ================= */
-
-        .student-actions {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            white-space: nowrap;
-        }
-
-        .student-action {
-            width: 30px;
-            height: 30px;
-
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-
-            border: 1px solid #E2E8F0;
-            border-radius: 6px;
-
-            background: #FFFFFF;
-            color: #2563EB;
-
-            font-family: 'Inter', Arial, sans-serif;
-            font-size: 10px;
-
-            cursor: pointer;
-            padding: 0;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                background 0.2s ease,
-                border-color 0.2s ease,
-                color 0.2s ease;
-        }
-
-
-        /* ================= VIEW / DETAILS ================= */
-
-        .student-action.details:hover {
-            background: #4F46E5;
-            border-color: #4F46E5;
-            color: #FFFFFF;
-
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
-        }
-
-
-        /* ================= DELETE ================= */
-
-        .student-action.delete {
-            color: #DC2626;
-        }
-
-        .student-action.delete:hover {
-            background: #FEE2E2;
-            border-color: #FECACA;
-            color: #DC2626;
-
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(220, 38, 38, 0.18);
-        }
-
-
-        /* ================= TABLE FOOTER ================= */
-
-        .student-table-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            min-height: 31px;
-            padding: 7px 11px;
-            border-top: 1px solid #E2E8F0;
-        }
-
-        .student-showing {
-            color: #475569;
-            font-size: 7px;
-        }
-
-        .student-pagination {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .page-btn {
-            width: 20px;
-            height: 20px;
-            border: 1px solid #E2E8F0;
-            border-radius: 4px;
-            background: #FFFFFF;
-            color: #64748B;
-            font-size: 8px;
-            cursor: pointer;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
-        }
-
-        .page-btn.active {
-            background: #4F46E5;
-            color: #FFFFFF;
-            border-color: #4F46E5;
-        }
-
-        .page-btn:hover {
-            border-color: #A5B4FC;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 7px rgba(15, 23, 42, 0.08);
-        }
-
-
-        /* ================= RESPONSIVE ================= */
-
-        @media (max-width: 1100px) {
-
-            .student-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .student-filters {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .student-reset {
-                width: 100%;
-            }
-
-            .student-table-wrapper {
-                overflow-x: auto;
-            }
-
-            .student-table {
-                min-width: 900px;
-            }
-        }
-
-
-        @media (max-width: 650px) {
-
-            .students-page {
-                padding: 15px;
-            }
-
-            .students-header {
-                flex-direction: column;
-            }
-
-            .student-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .student-filters {
-                grid-template-columns: 1fr;
-            }
-
-        }
-
-    </style>
-
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Admin/Site1.Master" AutoEventWireup="true" CodeBehind="Students.aspx.cs" Inherits="EduFlow.Admin.Students" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+    Student list - EduFlow CRM
 </asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
+     <style>
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            background: var(--surface-container);
+            border-radius: var(--radius-full);
+            padding: 4px;
+            gap: 4px;
+        }
 
+        .view-toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--on-surface-variant);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-<asp:Content ID="MainContent"
-    ContentPlaceHolderID="ContentPlaceHolder1"
-    runat="server">
+        .view-toggle-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+        }
 
-    <div class="students-page">
+        /* Filter & Search Bar */
+        .filter-bar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
 
+        .filter-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: var(--spacing-md);
+            align-items: flex-end;
+        }
 
-        <!-- ================= HEADER ================= -->
+        .filter-group { display: flex; flex-direction: column; gap: 6px; }
+        .filter-label { font-size: 11px; font-weight: 600; color: var(--on-surface-variant); text-transform: uppercase; }
+        .filter-select, .filter-input { height: 40px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0 12px; font-size: 13px; background: white; }
+        .filter-select:focus, .filter-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
 
-        <div class="students-header">
+        /* Grid View */
+        .students-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--spacing-lg); }
+        .students-grid.active { display: grid; }
 
-            <div class="students-title">
+        .student-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
 
-                <h1>
-                    Student Management
-                </h1>
+        .student-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 
-                <p>
-                    Manage enrolled student profiles, academic records, and admission lifecycles
-                </p>
+        .student-card-banner {
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            position: relative;
+        }
 
-            </div>
+        .student-card-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-full);
+            background: white;
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            position: absolute;
+            bottom: -32px;
+            left: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+        }
 
+        .student-card-body { padding: 40px var(--spacing-lg) var(--spacing-lg); }
+        .student-card-name { font-size: 16px; font-weight: 700; color: var(--on-surface); margin: 0 0 2px; }
+        .student-card-id { font-size: 12px; color: var(--primary); font-weight: 600; margin: 0 0 8px; }
 
-            <div class="student-view-buttons">
+        .student-card-footer {
+            padding: 12px var(--spacing-lg);
+            background: var(--surface-container-low);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 8px;
+        }
 
-                <button type="button"
-                        class="student-view-btn active">
+        /* Table View */
+        .table-view { display: none; }
+        .table-view.active { display: block; }
 
-                    <i class="fas fa-list"></i>
-                    Table View
+        .student-table-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+        }
 
-                </button>
+        .student-table { width: 100%; border-collapse: collapse; }
+        .student-table thead { background: var(--surface-container-low); }
+        .student-table th { padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--on-surface-variant); text-transform: uppercase; border-bottom: 1px solid var(--border-subtle); white-space: nowrap; }
+        .student-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-subtle); font-size: 14px; vertical-align: middle; }
 
-                <button type="button"
-                        class="student-view-btn">
+        .table-student { display: flex; align-items: center; gap: 12px; }
+        .table-avatar { width: 36px; height: 36px; border-radius: var(--radius-full); background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; }
 
-                    <i class="fas fa-th-large"></i>
-                    Grid View
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; }
+        .status-badge.active { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+        .status-badge.alumni { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .status-badge.suspended { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
 
-                </button>
+        .action-btn-sm { width: 32px; height: 32px; border: 1px solid var(--border-subtle); background: white; border-radius: var(--radius-md); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .action-btn-sm:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-            </div>
+        .table-footer { padding: var(--spacing-md) var(--spacing-lg); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); }
+    </style>
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
+    <main class="main-content" id="mainContent">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <div class="topbar-search"><i class="fas fa-search"></i><input type="text" id="globalStudentSearch" placeholder="Search student name, ID, roll number..."></div>
+                </div>
+                <div class="topbar-right">
+                    <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge"></span></button>
+                    <button class="topbar-i
+                    
+                    
+                    
+                    con-btn"><i class="fas fa-user-circle"></i></button>
+                </div>
+            </header>
 
-        </div>
-
-
-        <!-- ================= STATISTICS ================= -->
-
-        <div class="student-stats">
-
-
-            <!-- TOTAL ENROLLED -->
-
-            <div class="student-stat">
-
-                <div class="student-stat-content">
-
-                    <div class="student-stat-icon student-purple">
-
-                        <i class="fas fa-user-graduate"></i>
-
-                    </div>
-
+            <div class="content-area">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                     <div>
-
-                        <div class="student-stat-label">
-                            Total Enrolled
-                        </div>
-
-                        <div class="student-stat-number">
-                            456
-                        </div>
-
+                        <h1 class="headline-lg mb-1">Student Management</h1>
+                        <p class="text-muted mb-0">Manage enrolled student profiles, academic records, and admission lifecycles</p>
                     </div>
+                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                        <div class="view-toggle">
+                            <button type="button" class="view-toggle-btn active" id="tableViewBtn"><i class="fas fa-list"></i> Table View</button>
+                            <button type="button" class="view-toggle-btn" id="gridViewBtn"><i class="fas fa-th-large"></i> Grid View</button>
+                        </div>
+                        <button class="btn btn-outline-secondary" onclick="alert('Exporting student directory CSV...');">
+                            <i class="fas fa-download me-1"></i> Export Students
+                        </button>
+                    </div>
+                </div>
 
+                <!-- Stats Overview -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-icon primary"><i class="fas fa-user-graduate"></i></div>
+                            <div class="stats-content"><div class="stats-label">Total Enrolled</div><div class="stats-value">456</div></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-icon success"><i class="fas fa-user-check"></i></div>
+                            <div class="stats-content"><div class="stats-label">Active Students</div><div class="stats-value">412</div></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-icon warning"><i class="fas fa-user-clock"></i></div>
+                            <div class="stats-content"><div class="stats-label">New Batch 2024</div><div class="stats-value">128</div></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-icon info"><i class="fas fa-award"></i></div>
+                            <div class="stats-content"><div class="stats-label">Alumni</div><div class="stats-value">44</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search & Filters Bar -->
+                <div class="filter-bar">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">Search Students</label>
+                            <input type="text" class="filter-input" id="studentSearchInput" placeholder="Search by name, roll no, STU-ID or phone...">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Course</label>
+                            <select class="filter-select" id="courseFilter">
+                                <option value="all">All Courses</option>
+                                <option value="btech">B.Tech CSE</option>
+                                <option value="mba">MBA Finance</option>
+                                <option value="bca">BCA</option>
+                                <option value="bsc">B.Sc Physics</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Batch Year</label>
+                            <select class="filter-select" id="batchFilter">
+                                <option value="all">All Batches</option>
+                                <option value="2024">2024 - 2028</option>
+                                <option value="2023">2023 - 2027</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Status</label>
+                            <select class="filter-select" id="statusFilter">
+                                <option value="all">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="alumni">Alumni</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary" style="height:40px" onclick="resetFilters()"><i class="fas fa-redo"></i> Reset</button>
+                    </div>
+                </div>
+
+                <!-- 1. Table View (Primary) -->
+                <div class="table-view active" id="tableView">
+                    <div class="student-table-card">
+                        <div style="overflow-x:auto">
+                            <table class="student-table" id="studentTable">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Student ID</th>
+                                        <th>Roll Number</th>
+                                        <th>Enrolled Course</th>
+                                        <th>Contact / Email</th>
+                                        <th>Admission Date</th>
+                                        <th>Status</th>
+                                        <th>Actions (Details & History)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-name="Priya Sharma" data-id="STU-2024-0347">
+                                        <td>
+                                            <div class="table-student">
+                                                <div class="table-avatar">PS</div>
+                                                <div>
+                                                    <div class="fw-semibold">Priya Sharma</div>
+                                                    <div class="text-muted small">Reg: #REG-2024-884</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="text-primary fw-bold">STU-2024-0347</span></td>
+                                        <td><span class="badge bg-light text-dark border">24CSE042</span></td>
+                                        <td>MBA Finance</td>
+                                        <td><div>+91 98765 43211</div><div class="text-muted small">priya@email.com</div></td>
+                                        <td>Dec 10, 2024</td>
+                                        <td><span class="status-badge active"><i class="fas fa-circle" style="font-size:8px"></i> Active</span></td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-primary" title="View Student Details" onclick="window.location.href='student-details.html'"><i class="fas fa-eye me-1"></i> Details</button>
+                                                <button class="btn btn-sm btn-outline-secondary" title="View Admission History" onclick="openAdmissionHistoryModal('Priya Sharma', 'STU-2024-0347')"><i class="fas fa-history me-1"></i> History</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-name="Rajesh Kumar" data-id="STU-2024-0348">
+                                        <td>
+                                            <div class="table-student">
+                                                <div class="table-avatar">RK</div>
+                                                <div>
+                                                    <div class="fw-semibold">Rajesh Kumar</div>
+                                                    <div class="text-muted small">Reg: #REG-2024-885</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="text-primary fw-bold">STU-2024-0348</span></td>
+                                        <td><span class="badge bg-light text-dark border">24CSE043</span></td>
+                                        <td>B.Tech CSE</td>
+                                        <td><div>+91 98765 43210</div><div class="text-muted small">rajesh@email.com</div></td>
+                                        <td>Dec 12, 2024</td>
+                                        <td><span class="status-badge active"><i class="fas fa-circle" style="font-size:8px"></i> Active</span></td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-primary" title="View Student Details" onclick="window.location.href='student-details.html'"><i class="fas fa-eye me-1"></i> Details</button>
+                                                <button class="btn btn-sm btn-outline-secondary" title="View Admission History" onclick="openAdmissionHistoryModal('Rajesh Kumar', 'STU-2024-0348')"><i class="fas fa-history me-1"></i> History</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-name="Amit Verma" data-id="STU-2024-0349">
+                                        <td>
+                                            <div class="table-student">
+                                                <div class="table-avatar">AV</div>
+                                                <div>
+                                                    <div class="fw-semibold">Amit Verma</div>
+                                                    <div class="text-muted small">Reg: #REG-2024-886</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="text-primary fw-bold">STU-2024-0349</span></td>
+                                        <td><span class="badge bg-light text-dark border">24BCA012</span></td>
+                                        <td>BCA</td>
+                                        <td><div>+91 98765 11111</div><div class="text-muted small">amit@email.com</div></td>
+                                        <td>Dec 14, 2024</td>
+                                        <td><span class="status-badge active"><i class="fas fa-circle" style="font-size:8px"></i> Active</span></td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-primary" title="View Student Details" onclick="window.location.href='student-details.html'"><i class="fas fa-eye me-1"></i> Details</button>
+                                                <button class="btn btn-sm btn-outline-secondary" title="View Admission History" onclick="openAdmissionHistoryModal('Amit Verma', 'STU-2024-0349')"><i class="fas fa-history me-1"></i> History</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-footer">
+                            <div class="pagination-info">Showing <strong>1-3</strong> of <strong>456</strong> students</div>
+                            <div class="pagination-controls">
+                                <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                                <button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button>
+                                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Grid View -->
+                <div class="students-grid" id="gridView">
+                    <div class="student-card">
+                        <div class="student-card-banner">
+                            <div class="student-card-avatar">PS</div>
+                        </div>
+                        <div class="student-card-body">
+                            <p class="student-card-name">Priya Sharma</p>
+                            <p class="student-card-id">STU-2024-0347</p>
+                            <p class="text-muted small mb-3"><i class="fas fa-book me-1"></i>MBA Finance • Roll: 24CSE042</p>
+                            <div class="d-flex justify-content-between text-muted small border-top pt-2">
+                                <span><i class="far fa-envelope me-1"></i>priya@email.com</span>
+                                <span class="badge bg-success-subtle text-success">Active</span>
+                            </div>
+                        </div>
+                        <div class="student-card-footer">
+                            <button class="btn btn-sm btn-primary w-50" onclick="window.location.href='student-details.html'"><i class="fas fa-eye me-1"></i> Details</button>
+                            <button class="btn btn-sm btn-outline-secondary w-50" onclick="openAdmissionHistoryModal('Priya Sharma', 'STU-2024-0347')"><i class="fas fa-history me-1"></i> History</button>
+                        </div>
+                    </div>
                 </div>
 
             </div>
+        </main>
 
 
-            <!-- ACTIVE -->
-
-            <div class="student-stat">
-
-                <div class="student-stat-content">
-
-                    <div class="student-stat-icon student-green">
-
-                        <i class="fas fa-user-check"></i>
-
-                    </div>
-
+    <div class="modal fade" id="admissionHistoryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius:var(--radius-xl)">
+                <div class="modal-header border-bottom">
                     <div>
-
-                        <div class="student-stat-label">
-                            Active Students
-                        </div>
-
-                        <div class="student-stat-number">
-                            412
-                        </div>
-
+                        <h5 class="modal-title fw-bold" id="modalStudentTitle"><i class="fas fa-history text-primary me-2"></i>Admission History & Lifecycle</h5>
+                        <p class="text-muted small mb-0" id="modalStudentSub">Student ID: STU-2024-0347</p>
                     </div>
-
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
-            </div>
-
-
-            <!-- NEW BATCH -->
-
-            <div class="student-stat">
-
-                <div class="student-stat-content">
-
-                    <div class="student-stat-icon student-orange">
-
-                        <i class="fas fa-user-plus"></i>
-
-                    </div>
-
-                    <div>
-
-                        <div class="student-stat-label">
-                            New Batch 2024
+                <div class="modal-body p-4">
+                    <!-- Vertical Admission Timeline -->
+                    <div class="timeline" style="position:relative;padding-left:30px;border-left:2px solid var(--primary-light)">
+                        <div class="timeline-item mb-4" style="position:relative">
+                            <div style="position:absolute;left:-41px;top:0;width:24px;height:24px;border-radius:50%;background:var(--success);color:white;display:flex;align-items:center;justify-content:center;font-size:11px"><i class="fas fa-check"></i></div>
+                            <div class="fw-bold text-dark">Step 6: Enrolled & Student ID Generated</div>
+                            <div class="text-muted small">Dec 14, 2024 • Tuition fee deposit verified (₹4.1L paid) • STU-2024-0347 generated</div>
                         </div>
-
-                        <div class="student-stat-number">
-                            128
+                        <div class="timeline-item mb-4" style="position:relative">
+                            <div style="position:absolute;left:-41px;top:0;width:24px;height:24px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:11px"><i class="fas fa-check"></i></div>
+                            <div class="fw-bold text-dark">Step 5: Admission Offer Letter Approved</div>
+                            <div class="text-muted small">Dec 10, 2024 • Approved by Admission Manager</div>
                         </div>
-
+                        <div class="timeline-item mb-4" style="position:relative">
+                            <div style="position:absolute;left:-41px;top:0;width:24px;height:24px;border-radius:50%;background:var(--info);color:white;display:flex;align-items:center;justify-content:center;font-size:11px"><i class="fas fa-check"></i></div>
+                            <div class="fw-bold text-dark">Step 4: Documents Verified</div>
+                            <div class="text-muted small">Dec 8, 2024 • Marksheets & ID verified by Counselor Sarah Patel</div>
+                        </div>
+                        <div class="timeline-item mb-4" style="position:relative">
+                            <div style="position:absolute;left:-41px;top:0;width:24px;height:24px;border-radius:50%;background:var(--warning);color:white;display:flex;align-items:center;justify-content:center;font-size:11px"><i class="fas fa-check"></i></div>
+                            <div class="fw-bold text-dark">Step 3: Counseling Completed</div>
+                            <div class="text-muted small">Dec 5, 2024 • Completed 1-on-1 counseling session</div>
+                        </div>
+                        <div class="timeline-item" style="position:relative">
+                            <div style="position:absolute;left:-41px;top:0;width:24px;height:24px;border-radius:50%;background:var(--secondary);color:white;display:flex;align-items:center;justify-content:center;font-size:11px"><i class="fas fa-check"></i></div>
+                            <div class="fw-bold text-dark">Step 1: Inquiry Submitted</div>
+                            <div class="text-muted small">Dec 1, 2024 • Web Portal Inquiry #INQ-2024-0891</div>
+                        </div>
                     </div>
-
                 </div>
-
-            </div>
-
-
-            <!-- ALUMNI -->
-
-            <div class="student-stat">
-
-                <div class="student-stat-content">
-
-                    <div class="student-stat-icon student-blue">
-
-                        <i class="fas fa-award"></i>
-
-                    </div>
-
-                    <div>
-
-                        <div class="student-stat-label">
-                            Alumni
-                        </div>
-
-                        <div class="student-stat-number">
-                            44
-                        </div>
-
-                    </div>
-
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='student-details.html'"><i class="fas fa-external-link-alt me-1"></i> View Full Details</button>
                 </div>
-
             </div>
-
-
         </div>
-
-
-        <!-- ================= FILTER SECTION ================= -->
-
-        <div class="student-filter-box">
-
-            <div class="student-filters">
-
-
-                <!-- SEARCH -->
-
-                <div class="student-filter-field">
-
-                    <label>
-                        Search Students
-                    </label>
-
-                    <input type="text"
-                           class="student-input"
-                           placeholder="Search by name, roll no, STU-ID or phone..." />
-
-                </div>
-
-
-                <!-- COURSE -->
-
-                <div class="student-filter-field">
-
-                    <label>
-                        Course
-                    </label>
-
-                    <select class="student-select">
-
-                        <option>All Courses</option>
-                        <option>B.Tech CSE</option>
-                        <option>MBA Finance</option>
-                        <option>BCA</option>
-                        <option>B.Sc Data Science</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- BATCH -->
-
-                <div class="student-filter-field">
-
-                    <label>
-                        Batch Year
-                    </label>
-
-                    <select class="student-select">
-
-                        <option>All Batches</option>
-                        <option>2024</option>
-                        <option>2023</option>
-                        <option>2022</option>
-                        <option>2021</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- STATUS -->
-
-                <div class="student-filter-field">
-
-                    <label>
-                        Status
-                    </label>
-
-                    <select class="student-select">
-
-                        <option>All Status</option>
-                        <option>Active</option>
-                        <option>Inactive</option>
-                        <option>Alumni</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- RESET -->
-
-                <button type="button"
-                        class="student-reset"
-                        onclick="resetStudentFilters();">
-
-                    <i class="fas fa-rotate-right"></i>
-                    Reset
-
-                </button>
-
-
-            </div>
-
-        </div>
-
-
-        <!-- ================= STUDENT TABLE ================= -->
-
-        <div class="student-table-wrapper">
-
-            <table class="student-table">
-
-
-                <thead>
-
-                    <tr>
-
-                        <th style="width: 12%;">
-                            Student Name
-                        </th>
-
-                        <th style="width: 10%;">
-                            Student ID
-                        </th>
-
-                        <th style="width: 10%;">
-                            Roll Number
-                        </th>
-
-                        <th style="width: 13%;">
-                            Enrolled Course
-                        </th>
-
-                        <th style="width: 15%;">
-                            Contact / Email
-                        </th>
-
-                        <th style="width: 11%;">
-                            Admission Date
-                        </th>
-
-                        <th style="width: 10%;">
-                            Status
-                        </th>
-
-                        <th style="width: 9%;">
-                            Actions
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-
-                    <!-- ================= STUDENT 1 ================= -->
-
-                    <tr>
-
-                        <td>
-
-                            <div class="student-name-cell">
-
-                                <div class="student-avatar">
-                                    PS
-                                </div>
-
-                                <div class="student-name">
-
-                                    Priya
-                                    <br />
-                                    Sharma
-
-                                    <span class="student-reg">
-                                        Reg: REG-2024-884
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="student-id">
-                                STU-2024-0347
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="roll-number">
-                                24CSE042
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            MBA Finance
-                        </td>
-
-
-                        <td>
-
-                            <div class="contact-cell">
-
-                                <div class="contact-phone">
-                                    +91 98765 43211
-                                </div>
-
-                                <div class="contact-email">
-                                    priya@gmail.com
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-                            Dec 10, 2024
-                        </td>
-
-
-                        <td>
-
-                            <span class="student-status">
-
-                                <i class="fas fa-circle"></i>
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="student-actions">
-
-                                <!-- VIEW -->
-
-                                <button type="button"
-                                        class="student-action details"
-                                        title="View Details"
-                                        onclick="viewStudent('STU-2024-0347');">
-
-                                    <i class="fas fa-eye"></i>
-
-                                </button>
-
-
-                                <!-- DELETE -->
-
-                                <button type="button"
-                                        class="student-action delete"
-                                        title="Delete Student"
-                                        onclick="deleteStudent('STU-2024-0347');">
-
-                                    <i class="fas fa-trash"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    <!-- ================= STUDENT 2 ================= -->
-
-                    <tr>
-
-                        <td>
-
-                            <div class="student-name-cell">
-
-                                <div class="student-avatar">
-                                    RK
-                                </div>
-
-                                <div class="student-name">
-
-                                    Rajesh
-                                    <br />
-                                    Kumar
-
-                                    <span class="student-reg">
-                                        Reg: REG-2024-885
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="student-id">
-                                STU-2024-0348
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="roll-number">
-                                24CSE043
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            B.Tech CSE
-                        </td>
-
-
-                        <td>
-
-                            <div class="contact-cell">
-
-                                <div class="contact-phone">
-                                    +91 98765 43210
-                                </div>
-
-                                <div class="contact-email">
-                                    rajesh@gmail.com
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-                            Dec 12, 2024
-                        </td>
-
-
-                        <td>
-
-                            <span class="student-status">
-
-                                <i class="fas fa-circle"></i>
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="student-actions">
-
-                                <!-- VIEW -->
-
-                                <button type="button"
-                                        class="student-action details"
-                                        title="View Details"
-                                        onclick="viewStudent('STU-2024-0348');">
-
-                                    <i class="fas fa-eye"></i>
-
-                                </button>
-
-
-                                <!-- DELETE -->
-
-                                <button type="button"
-                                        class="student-action delete"
-                                        title="Delete Student"
-                                        onclick="deleteStudent('STU-2024-0348');">
-
-                                    <i class="fas fa-trash"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    <!-- ================= STUDENT 3 ================= -->
-
-                    <tr>
-
-                        <td>
-
-                            <div class="student-name-cell">
-
-                                <div class="student-avatar">
-                                    AV
-                                </div>
-
-                                <div class="student-name">
-
-                                    Amit
-                                    <br />
-                                    Verma
-
-                                    <span class="student-reg">
-                                        Reg: REG-2024-886
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="student-id">
-                                STU-2024-0349
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="roll-number">
-                                24BCA012
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            BCA
-                        </td>
-
-
-                        <td>
-
-                            <div class="contact-cell">
-
-                                <div class="contact-phone">
-                                    +91 98765 11111
-                                </div>
-
-                                <div class="contact-email">
-                                    amit@gmail.com
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-                            Dec 14, 2024
-                        </td>
-
-
-                        <td>
-
-                            <span class="student-status">
-
-                                <i class="fas fa-circle"></i>
-                                Active
-
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <div class="student-actions">
-
-                                <!-- VIEW -->
-
-                                <button type="button"
-                                        class="student-action details"
-                                        title="View Details"
-                                        onclick="viewStudent('STU-2024-0349');">
-
-                                    <i class="fas fa-eye"></i>
-
-                                </button>
-
-
-                                <!-- DELETE -->
-
-                                <button type="button"
-                                        class="student-action delete"
-                                        title="Delete Student"
-                                        onclick="deleteStudent('STU-2024-0349');">
-
-                                    <i class="fas fa-trash"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                </tbody>
-
-            </table>
-
-
-            <!-- ================= TABLE FOOTER ================= -->
-
-            <div class="student-table-footer">
-
-                <div class="student-showing">
-                    Showing 1-3 of 456 students
-                </div>
-
-
-                <div class="student-pagination">
-
-                    <button type="button"
-                            class="page-btn">
-                        &lt;
-                    </button>
-
-                    <button type="button"
-                            class="page-btn active">
-                        1
-                    </button>
-
-                    <button type="button"
-                            class="page-btn">
-                        2
-                    </button>
-
-                    <button type="button"
-                            class="page-btn">
-                        3
-                    </button>
-
-                    <button type="button"
-                            class="page-btn">
-                        &gt;
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
     </div>
 
 
-    <!-- ================= JAVASCRIPT ================= -->
-
     <script>
+        // Sidebar Toggle
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.getElementById('mainContent').classList.toggle('sidebar-collapsed');
+        });
 
-/* ================= VIEW STUDENT ================= */
+        // View Toggles
+        const tableViewBtn = document.getElementById('tableViewBtn');
+        const gridViewBtn = document.getElementById('gridViewBtn');
+        const tableView = document.getElementById('tableView');
+        const gridView = document.getElementById('gridView');
 
-function viewStudent(studentId) {
+        tableViewBtn.addEventListener('click', function() {
+            tableViewBtn.classList.add('active');
+            gridViewBtn.classList.remove('active');
+            tableView.classList.add('active');
+            gridView.classList.remove('active');
+        });
 
-    /*
-     * Currently showing demo message.
-     * Later this can redirect to StudentDetails.aspx.
-     */
+        gridViewBtn.addEventListener('click', function() {
+            gridViewBtn.classList.add('active');
+            tableViewBtn.classList.remove('active');
+            gridView.classList.add('active');
+            tableView.classList.remove('active');
+        });
 
-    alert(
-        "Opening details for student: " +
-        studentId
-    );
-
-}
-
-
-/* ================= DELETE STUDENT ================= */
-
-function deleteStudent(studentId) {
-
-    var confirmDelete = confirm(
-        "Are you sure you want to delete student " +
-        studentId +
-        "?"
-    );
-
-    if (confirmDelete) {
-
-        alert(
-            "Student " +
-            studentId +
-            " deleted successfully."
-        );
-
-    }
-
-}
-
-
-/* ================= RESET FILTERS ================= */
-
-function resetStudentFilters() {
-
-    var inputs =
-        document.querySelectorAll(
-            '.student-input'
-        );
-
-    for (var i = 0; i < inputs.length; i++) {
-
-        inputs[i].value = "";
-
-    }
-
-
-    var selects =
-        document.querySelectorAll(
-            '.student-select'
-        );
-
-    for (var j = 0; j < selects.length; j++) {
-
-        selects[j].selectedIndex = 0;
-
-    }
-
-}
-
-</script>
-
+       
+        function openAdmissionHistoryModal(name, id) {
+            document.getElementById('modalStudentTitle').innerHTML = `<i class="fas fa-history text-primary me-2"></i>Admission History - ${name}`;
+            document.getElementById('modalStudentSub').innerText = `Student ID: ${id}`;
+            const modal = new bootstrap.Modal(document.getElementById('admissionHistoryModal'));
+            modal.show();
+        }
+    </script>
 </asp:Content>

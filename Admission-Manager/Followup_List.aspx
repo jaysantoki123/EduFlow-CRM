@@ -173,9 +173,9 @@
                     </div>
                     <div class="d-flex gap-2 align-items-center flex-wrap">
                         <div class="view-toggle">
-                            <button class="view-toggle-btn active" id="kanbanViewBtn"><i class="fas fa-columns"></i> Board</button>
-                            <button class="view-toggle-btn" id="listViewBtn"><i class="fas fa-list"></i> Table List</button>
-                            <button class="view-toggle-btn" id="counselorActivityBtn"><i class="fas fa-user-clock"></i> Counselor Activities</button>
+                            <button type="button" class="view-toggle-btn active" id="kanbanViewBtn"><i class="fas fa-columns"></i> Board</button>
+                            <button type="button" class="view-toggle-btn" id="listViewBtn"><i class="fas fa-list"></i> Table List</button>
+                            <button type="button" class="view-toggle-btn" id="counselorActivityBtn"><i class="fas fa-user-clock"></i> Counselor Activities</button>
                         </div>
                         <a href="followup-calendar.html" class="btn btn-outline-primary">
                             <i class="far fa-calendar-alt me-1"></i> Follow-up Calendar
@@ -447,4 +447,27 @@
 
             </div>
         </main>
+        <script>
+            const kanbanViewBtn = document.getElementById('kanbanViewBtn');
+            const listViewBtn = document.getElementById('listViewBtn');
+            const counselorActivityBtn = document.getElementById('counselorActivityBtn');
+            const kanbanView = document.getElementById('kanbanView');
+            const listView = document.getElementById('listView');
+            const counselorActivityView = document.getElementById('counselorActivityView');
+            const statusFilterTabs = document.getElementById('statusFilterTabs');
+
+            function showFollowupView(view) {
+                kanbanViewBtn.classList.toggle('active', view === 'kanban');
+                listViewBtn.classList.toggle('active', view === 'list');
+                counselorActivityBtn.classList.toggle('active', view === 'activity');
+                kanbanView.classList.toggle('hidden', view !== 'kanban');
+                listView.classList.toggle('active', view === 'list');
+                counselorActivityView.classList.toggle('active', view === 'activity');
+                statusFilterTabs.style.display = view === 'activity' ? 'none' : 'flex';
+            }
+
+            kanbanViewBtn.addEventListener('click', function () { showFollowupView('kanban'); });
+            listViewBtn.addEventListener('click', function () { showFollowupView('list'); });
+            counselorActivityBtn.addEventListener('click', function () { showFollowupView('activity'); });
+        </script>
 </asp:Content>

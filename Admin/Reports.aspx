@@ -1,1194 +1,477 @@
-﻿<%@ Page Title="Reports"
-    Language="C#"
-    MasterPageFile="~/Admin/Site1.Master"
-    AutoEventWireup="true"
-    CodeBehind="Reports.aspx.cs"
-    Inherits="EduCRM.Reports" %>
-
-<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-
-    <style>
-
-        .reports-page {
-            padding: 24px;
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Admin/Site1.Master" AutoEventWireup="true" CodeBehind="Reports.aspx.cs" Inherits="EduFlow.Admin.Reports" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
+      <style>
+        .reports-container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
         }
 
-        /* =========================
-           PAGE HEADER
-           ========================= */
-
-        .reports-header {
+        .reports-nav-tabs {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 22px;
+            gap: 6px;
+            overflow-x: auto;
+            border-bottom: 2px solid var(--border-subtle);
+            padding-bottom: 8px;
+            margin-bottom: var(--spacing-lg);
         }
 
-        .reports-title h1 {
-            margin: 0;
-            font-size: 25px;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .reports-title p {
-            margin: 5px 0 0;
-            color: #6b7280;
+        .report-tab-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 18px;
             font-size: 13px;
-        }
-
-        /* =========================
-           STAT CARDS
-           ========================= */
-
-        .reports-stats {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            margin-bottom: 22px;
-        }
-
-        .report-stat {
-            background: #ffffff;
-            border: 1px solid #e4e8ef;
-            border-radius: 8px;
-            padding: 16px;
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
-        }
-
-        .report-stat:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.10);
-            border-color: #c7d2fe;
-        }
-
-        .report-stat-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .report-stat-label {
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 7px;
-        }
-
-        .report-stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .report-stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-        }
-
-        .icon-blue {
-            background: #eef2ff;
-            color: #4f46e5;
-        }
-
-        .icon-green {
-            background: #ecfdf5;
-            color: #059669;
-        }
-
-        .icon-orange {
-            background: #fff7ed;
-            color: #ea580c;
-        }
-
-        .icon-purple {
-            background: #f5f3ff;
-            color: #7c3aed;
-        }
-
-        .icon-red {
-            background: #fef2f2;
-            color: #dc2626;
-        }
-
-        /* =========================
-           FILTER CARD
-           ========================= */
-
-        .report-filter-card {
-            background: #ffffff;
-            border: 1px solid #e4e8ef;
-            border-radius: 8px;
-            padding: 18px;
-            margin-bottom: 22px;
-            transition: box-shadow 0.2s ease, border-color 0.2s ease;
-        }
-
-        .report-filter-card:hover {
-            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
-            border-color: #d8def0;
-        }
-
-        .filter-title {
-            font-size: 15px;
             font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 15px;
+            color: var(--on-surface-variant);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .report-tab-btn:hover {
+            background: var(--surface-container);
+            color: var(--primary);
+        }
+
+        .report-tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Banner Header */
+        .report-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .report-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+
+        .report-header p {
+            font-size: 13px;
+            opacity: .9;
+            margin: 0;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .export-btn-pdf {
+            background: rgba(239, 68, 68, 0.9);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .export-btn-pdf:hover { background: #dc2626; transform: translateY(-1px); }
+
+        .export-btn-excel {
+            background: rgba(34, 197, 94, 0.9);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .export-btn-excel:hover { background: #16a34a; transform: translateY(-1px); }
+
+        .filter-bar {
+            background: rgba(255, 255, 255, .8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
         }
 
         .filter-row {
             display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 15px;
-            align-items: end;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--spacing-md);
         }
 
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-        }
+        .filter-group { display: flex; flex-direction: column; gap: 6px; }
+        .filter-label { font-size: 11px; font-weight: 600; color: var(--on-surface-variant); text-transform: uppercase; }
+        .filter-select, .filter-input { height: 40px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0 12px; font-size: 13px; background: white; }
 
-        .filter-group label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #4b5563;
-            margin-bottom: 7px;
-        }
-
-        .filter-group select {
-            height: 40px;
-            border: 1px solid #d9dee8;
-            border-radius: 6px;
-            padding: 0 12px;
-            font-size: 13px;
-            color: #374151;
-            background: #ffffff;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .filter-group select:hover {
-            border-color: #aeb8d4;
-        }
-
-        .filter-group select:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.10);
-        }
-
-        .generate-btn {
-            height: 40px;
-            padding: 0 18px;
-            border: none;
-            border-radius: 6px;
-            background: #4f57d5;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                background 0.2s ease;
-        }
-
-        .generate-btn:hover {
-            transform: translateY(-2px);
-            background: #424ac0;
-            box-shadow: 0 7px 16px rgba(79, 87, 213, 0.25);
-        }
-
-        /* =========================
-           REPORT CONTENT
-           ========================= */
-
-        .report-grid {
+        .kpi-row {
             display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 20px;
-            margin-bottom: 22px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
         }
 
-        .report-card {
-            background: #ffffff;
-            border: 1px solid #e4e8ef;
-            border-radius: 8px;
-            overflow: hidden;
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
+        .kpi-mini {
+            background: rgba(255, 255, 255, .8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-lg);
+            text-align: center;
         }
 
-        .report-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-            border-color: #d8def0;
-        }
-
-        .report-card-header {
-            padding: 17px 18px;
-            border-bottom: 1px solid #edf0f4;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .report-card-header h3 {
-            margin: 0;
-            font-size: 15px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .report-card-header span {
-            font-size: 11px;
-            color: #6b7280;
-        }
-
-        .report-card-body {
-            padding: 20px;
-        }
-
-        /* =========================
-           BAR CHART
-           ========================= */
-
-        .bar-chart {
-            height: 245px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
-            gap: 18px;
-            padding: 10px 10px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .bar-item {
-            height: 100%;
-            flex: 1;
-            max-width: 65px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .bar-value {
-            font-size: 11px;
-            color: #4b5563;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .bar {
-            width: 100%;
-            max-width: 42px;
-            background: #6366f1;
-            border-radius: 5px 5px 0 0;
-            transition:
-                transform 0.2s ease,
-                opacity 0.2s ease;
-        }
-
-        .bar:hover {
-            transform: scaleY(1.04);
-            opacity: 0.82;
-        }
-
-        .bar-label {
-            margin-top: 8px;
-            font-size: 10px;
-            color: #6b7280;
-        }
-
-        /* =========================
-           SUMMARY
-           ========================= */
-
-        .summary-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .summary-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-bottom: 13px;
-            border-bottom: 1px solid #edf0f4;
-        }
-
-        .summary-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .summary-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .summary-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #6366f1;
-        }
-
-        .summary-name {
-            font-size: 12px;
-            color: #4b5563;
-        }
-
-        .summary-number {
-            font-size: 13px;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        /* =========================
-           TABLE
-           ========================= */
+        .kpi-mini-icon { width: 40px; height: 40px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0 auto var(--spacing-sm); }
+        .kpi-mini-value { font-size: 26px; font-weight: 700; margin: 0; }
+        .kpi-mini-label { font-size: 11px; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; }
 
         .report-table-card {
-            background: #ffffff;
-            border: 1px solid #e4e8ef;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, .8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
             overflow: hidden;
-            transition:
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
+            margin-bottom: var(--spacing-lg);
         }
 
-        .report-table-card:hover {
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.07);
-            border-color: #d8def0;
-        }
-
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .report-table th {
-            text-align: left;
-            padding: 13px 17px;
-            background: #f8fafc;
-            color: #6b7280;
-            font-size: 11px;
-            font-weight: 600;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .report-table td {
-            padding: 14px 17px;
-            font-size: 12px;
-            color: #374151;
-            border-bottom: 1px solid #edf0f4;
-        }
-
-        .report-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .report-table tbody tr {
-            transition: background 0.2s ease;
-        }
-
-        .report-table tbody tr:hover {
-            background: #f8faff;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-
-        .status-completed {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-review {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-
-        .status-rejected {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-
-        /* =========================
-           RESPONSIVE
-           ========================= */
-
-        @media (max-width: 1100px) {
-            .reports-stats {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .report-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 750px) {
-            .reports-page {
-                padding: 15px;
-            }
-
-            .reports-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .reports-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .filter-row {
-                grid-template-columns: 1fr;
-            }
-
-            .generate-btn {
-                width: 100%;
-            }
-
-            .report-table {
-                min-width: 700px;
-            }
-
-            .report-table-card {
-                overflow-x: auto;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .reports-stats {
-                grid-template-columns: 1fr;
-            }
-        }
-
-    </style>
-
+        .report-table { width: 100%; border-collapse: collapse; }
+        .report-table thead { background: var(--surface-container-low); }
+        .report-table th { padding: 14px 16px; font-size: 12px; font-weight: 600; color: var(--on-surface-variant); text-transform: uppercase; border-bottom: 1px solid var(--border-subtle); white-space: nowrap; }
+        .report-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-subtle); font-size: 14px; vertical-align: middle; }
+    </style>        
 </asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
+     <main class="main-content" id="mainContent">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <div class="topbar-search"><i class="fas fa-search"></i><input type="text" placeholder="Search analytics & reports..."></div>
+                </div>
+                <div class="topbar-right">
+                    <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge"></span></button>
+                    <button class="topbar-icon-btn"><i class="fas fa-user-circle"></i></button>
+                </div>
+            </header>
 
-
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-
-    <div class="reports-page">
-
-        <!-- =========================
-             PAGE HEADER
-             ========================= -->
-
-        <div class="reports-header">
-
-            <div class="reports-title">
-                <h1>Reports</h1>
-                <p>View and analyze your institute's performance reports.</p>
-            </div>
-
-        </div>
-
-
-        <!-- =========================
-             STATISTICS
-             ========================= -->
-
-        <div class="reports-stats">
-
-            <div class="report-stat">
-
-                <div class="report-stat-top">
-
+            <div class="content-area">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                     <div>
-                        <div class="report-stat-label">
-                            Total Applications
-                        </div>
-
-                        <div class="report-stat-value">
-                            1,254
-                        </div>
+                        <h1 class="headline-lg mb-1">Reports & Analytics Center</h1>
+                        <p class="text-muted mb-0">Institutional analytics, conversion metrics, and downloadable executive reports</p>
                     </div>
-
-                    <div class="report-stat-icon icon-blue">
-                        <i class="fas fa-file-alt"></i>
-                    </div>
-
                 </div>
 
+                <!-- 8 Interactive Report Navigation Tabs -->
+                <div class="reports-nav-tabs" id="reportTabs">
+                    <button class="report-tab-btn active" data-report="inquiry"><i class="fas fa-clipboard-list"></i> Inquiry Report</button>
+                    <button class="report-tab-btn" data-report="counseling"><i class="fas fa-user-tie"></i> Counseling Report</button>
+                    <button class="report-tab-btn" data-report="followup"><i class="fas fa-phone-alt"></i> Follow-up Report</button>
+                    <button class="report-tab-btn" data-report="application"><i class="fas fa-file-alt"></i> Application Report</button>
+                    <button class="report-tab-btn" data-report="admission"><i class="fas fa-user-check"></i> Admission Report</button>
+                    <button class="report-tab-btn" data-report="student"><i class="fas fa-user-graduate"></i> Student Report</button>
+                    <button class="report-tab-btn" data-report="course"><i class="fas fa-book"></i> Course Report</button>
+                    <button class="report-tab-btn" data-report="counselor-performance"><i class="fas fa-award"></i> Counselor Performance</button>
+                </div>
+
+                <!-- Active Report Content Body -->
+                <div class="reports-container">
+                    <!-- Dynamic Report Banner -->
+                    <div class="report-header">
+                        <div>
+                            <h1 id="reportBannerTitle"><i class="fas fa-clipboard-list me-2"></i>Inquiry Analytics Report</h1>
+                            <p id="reportBannerSub">Detailed breakdown of lead generation channels, conversion rates, and inquiry statuses</p>
+                        </div>
+                        <div class="header-controls">
+                            <button class="export-btn-pdf" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                            <button class="export-btn-excel" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="filter-bar">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label class="filter-label">Date Range</label>
+                                <select class="filter-select"><option>This Month</option><option>Last 30 Days</option><option>Last Quarter</option><option>Academic Year 2024</option></select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Department / Course</label>
+                                <select class="filter-select"><option>All Departments</option><option>B.Tech CSE</option><option>MBA Finance</option><option>BCA</option></select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Assigned Staff / Counselor</label>
+                                <select class="filter-select"><option>All Counselors</option><option>Sarah Patel</option><option>Rahul Gupta</option><option>Meera Patil</option></select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Status Filter</label>
+                                <select class="filter-select"><option>All Statuses</option><option>Active / Converted</option><option>Pending</option><option>Lost / Closed</option></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KPI Metric Cards Container -->
+                    <div class="kpi-row" id="kpiContainer">
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-icon" style="background:rgba(79,70,229,.1);color:var(--primary)"><i class="fas fa-inbox"></i></div>
+                            <p class="kpi-mini-value" style="color:var(--primary)">1,284</p>
+                            <p class="kpi-mini-label">Total Inquiries</p>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-icon" style="background:rgba(0,81,213,.1);color:var(--info)"><i class="fas fa-star"></i></div>
+                            <p class="kpi-mini-value" style="color:var(--info)">342</p>
+                            <p class="kpi-mini-label">New This Month</p>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-icon" style="background:rgba(34,197,94,.1);color:var(--success)"><i class="fas fa-check-circle"></i></div>
+                            <p class="kpi-mini-value" style="color:var(--success)">856</p>
+                            <p class="kpi-mini-label">Converted Leads</p>
+                        </div>
+                        <div class="kpi-mini">
+                            <div class="kpi-mini-icon" style="background:rgba(0,109,98,.1);color:var(--tertiary)"><i class="fas fa-percentage"></i></div>
+                            <p class="kpi-mini-value" style="color:var(--tertiary)">66.7%</p>
+                            <p class="kpi-mini-label">Conversion Rate</p>
+                        </div>
+                    </div>
+
+                    <!-- Report Table Breakdown -->
+                    <div class="report-table-card">
+                        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                            <h3 class="headline-sm mb-0" id="tableTitle">Report Data Matrix</h3>
+                            <span class="text-muted small">Generated on Dec 16, 2024</span>
+                        </div>
+                        <div style="overflow-x:auto">
+                            <table class="report-table" id="reportTable">
+                                <thead id="reportTableHead">
+                                    <tr>
+                                        <th>Program / Category</th>
+                                        <th>Total Count</th>
+                                        <th>In Progress</th>
+                                        <th>Completed / Converted</th>
+                                        <th>Success Rate %</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportTableBody">
+                                    <tr><td class="fw-semibold">B.Tech Computer Science</td><td>320</td><td>45</td><td>225</td><td><span class="badge bg-success-subtle text-success">70.3%</span></td></tr>
+                                    <tr><td class="fw-semibold">MBA Finance</td><td>245</td><td>38</td><td>172</td><td><span class="badge bg-success-subtle text-success">70.2%</span></td></tr>
+                                    <tr><td class="fw-semibold">BCA</td><td>198</td><td>32</td><td>128</td><td><span class="badge bg-warning-subtle text-warning">64.6%</span></td></tr>
+                                    <tr><td class="fw-semibold">M.Tech Artificial Intelligence</td><td>125</td><td>22</td><td>82</td><td><span class="badge bg-success-subtle text-success">65.6%</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
-            <div class="report-stat">
-
-                <div class="report-stat-top">
-
-                    <div>
-                        <div class="report-stat-label">
-                            Total Students
-                        </div>
-
-                        <div class="report-stat-value">
-                            456
-                        </div>
-                    </div>
-
-                    <div class="report-stat-icon icon-green">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="report-stat">
-
-                <div class="report-stat-top">
-
-                    <div>
-                        <div class="report-stat-label">
-                            Total Courses
-                        </div>
-
-                        <div class="report-stat-value">
-                            24
-                        </div>
-                    </div>
-
-                    <div class="report-stat-icon icon-orange">
-                        <i class="fas fa-book"></i>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="report-stat">
-
-                <div class="report-stat-top">
-
-                    <div>
-                        <div class="report-stat-label">
-                            Counseling Sessions
-                        </div>
-
-                        <div class="report-stat-value">
-                            328
-                        </div>
-                    </div>
-
-                    <div class="report-stat-icon icon-purple">
-                        <i class="fas fa-comments"></i>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="report-stat">
-
-                <div class="report-stat-top">
-
-                    <div>
-                        <div class="report-stat-label">
-                            Pending Follow-ups
-                        </div>
-
-                        <div class="report-stat-value">
-                            52
-                        </div>
-                    </div>
-
-                    <div class="report-stat-icon icon-red">
-                        <i class="fas fa-clock"></i>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =========================
-             REPORT FILTER
-             ========================= -->
-
-        <div class="report-filter-card">
-
-            <div class="filter-title">
-                Generate Report
-            </div>
-
-            <div class="filter-row">
-
-                <div class="filter-group">
-
-                    <label for="reportType">
-                        Report Type
-                    </label>
-
-                    <select id="reportType">
-
-                        <option value="Application Report">
-                            Application Report
-                        </option>
-
-                        <option value="Student Report">
-                            Student Report
-                        </option>
-
-                        <option value="Course Report">
-                            Course Report
-                        </option>
-
-                        <option value="Counseling Report">
-                            Counseling Report
-                        </option>
-
-                        <option value="Follow-up Report">
-                            Follow-up Report
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="filter-group">
-
-                    <label for="reportPeriod">
-                        Date Range
-                    </label>
-
-                    <select id="reportPeriod">
-
-                        <option value="This Month">
-                            This Month
-                        </option>
-
-                        <option value="Last Month">
-                            Last Month
-                        </option>
-
-                        <option value="Last 3 Months">
-                            Last 3 Months
-                        </option>
-
-                        <option value="This Year">
-                            This Year
-                        </option>
-
-                        <option value="All Time">
-                            All Time
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <button type="button"
-                        class="generate-btn"
-                        onclick="generateReport();">
-
-                    <i class="fas fa-chart-bar"></i>
-
-                    &nbsp;
-
-                    Generate Report
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- =========================
-             REPORT CHART + SUMMARY
-             ========================= -->
-
-        <div class="report-grid">
-
-
-            <!-- APPLICATION CHART -->
-
-            <div class="report-card">
-
-                <div class="report-card-header">
-
-                    <h3>
-                        Applications Overview
-                    </h3>
-
-                    <span>
-                        Last 6 Months
-                    </span>
-
-                </div>
-
-
-                <div class="report-card-body">
-
-                    <div class="bar-chart">
-
-                        <div class="bar-item">
-
-                            <div class="bar-value">
-                                148
-                            </div>
-
-                            <div class="bar"
-                                 style="height: 55%;">
-                            </div>
-
-                            <div class="bar-label">
-                                Jul
-                            </div>
-
-                        </div>
-
-
-                        <div class="bar-item">
-
-                            <div class="bar-value">
-                                172
-                            </div>
-
-                            <div class="bar"
-                                 style="height: 64%;">
-                            </div>
-
-                            <div class="bar-label">
-                                Aug
-                            </div>
-
-                        </div>
-
-
-                        <div class="bar-item">
-
-                            <div class="bar-value">
-                                196
-                            </div>
-
-                            <div class="bar"
-                                 style="height: 73%;">
-                            </div>
-
-                            <div class="bar-label">
-                                Sep
-                            </div>
-
-                        </div>
-
-
-                        <div class="bar-item">
-
-                            <div class="bar-value">
-                                214
-                            </div>
-
-                            <div class="bar"
-                                 style="height: 80%;">
-                            </div>
-
-                            <div class="bar-label">
-                                Oct
-                            </div>
-
-                        </div>
-
-
-                        <div class="bar-item">
-
-                            <div class="bar-value">
-                                238
-                            </div>
-
-                            <div class="bar"
-                                 style="height: 89%;">
-                            </div>
-
-                            <div class="bar-label">
-                                Nov
-                            </div>
-
-                        </div>
-
-
-                        <div class="bar-item">
-
-                            <div class="bar-value">
-                                286
-                            </div>
-
-                            <div class="bar"
-                                 style="height: 100%;">
-                            </div>
-
-                            <div class="bar-label">
-                                Dec
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- SUMMARY -->
-
-            <div class="report-card">
-
-                <div class="report-card-header">
-
-                    <h3>
-                        Application Summary
-                    </h3>
-
-                    <span>
-                        Current
-                    </span>
-
-                </div>
-
-
-                <div class="report-card-body">
-
-                    <div class="summary-list">
-
-
-                        <div class="summary-item">
-
-                            <div class="summary-left">
-
-                                <div class="summary-dot"></div>
-
-                                <div class="summary-name">
-                                    Approved
-                                </div>
-
-                            </div>
-
-                            <div class="summary-number">
-                                742
-                            </div>
-
-                        </div>
-
-
-                        <div class="summary-item">
-
-                            <div class="summary-left">
-
-                                <div class="summary-dot"></div>
-
-                                <div class="summary-name">
-                                    Under Review
-                                </div>
-
-                            </div>
-
-                            <div class="summary-number">
-                                236
-                            </div>
-
-                        </div>
-
-
-                        <div class="summary-item">
-
-                            <div class="summary-left">
-
-                                <div class="summary-dot"></div>
-
-                                <div class="summary-name">
-                                    New Applications
-                                </div>
-
-                            </div>
-
-                            <div class="summary-number">
-                                128
-                            </div>
-
-                        </div>
-
-
-                        <div class="summary-item">
-
-                            <div class="summary-left">
-
-                                <div class="summary-dot"></div>
-
-                                <div class="summary-name">
-                                    Rejected
-                                </div>
-
-                            </div>
-
-                            <div class="summary-number">
-                                148
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =========================
-             RECENT REPORT DATA
-             ========================= -->
-
-        <div class="report-table-card">
-
-            <div class="report-card-header">
-
-                <h3>
-                    Recent Report Data
-                </h3>
-
-                <span>
-                    Latest Applications
-                </span>
-
-            </div>
-
-
-            <table class="report-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Student Name
-                        </th>
-
-                        <th>
-                            Course
-                        </th>
-
-                        <th>
-                            Application Date
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Counselor
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-
-                    <tr>
-
-                        <td>
-                            Rajesh Kumar
-                        </td>
-
-                        <td>
-                            B.Tech CSE
-                        </td>
-
-                        <td>
-                            Dec 15, 2024
-                        </td>
-
-                        <td>
-
-                            <span class="status-badge status-completed">
-                                Approved
-                            </span>
-
-                        </td>
-
-                        <td>
-                            Sarah Patel
-                        </td>
-
-                    </tr>
-
-
-                    <tr>
-
-                        <td>
-                            Priya Sharma
-                        </td>
-
-                        <td>
-                            MBA Finance
-                        </td>
-
-                        <td>
-                            Dec 15, 2024
-                        </td>
-
-                        <td>
-
-                            <span class="status-badge status-pending">
-                                Pending Review
-                            </span>
-
-                        </td>
-
-                        <td>
-                            Rahul Gupta
-                        </td>
-
-                    </tr>
-
-
-                    <tr>
-
-                        <td>
-                            Amit Verma
-                        </td>
-
-                        <td>
-                            BCA
-                        </td>
-
-                        <td>
-                            Dec 14, 2024
-                        </td>
-
-                        <td>
-
-                            <span class="status-badge status-review">
-                                Under Review
-                            </span>
-
-                        </td>
-
-                        <td>
-                            Meera Patel
-                        </td>
-
-                    </tr>
-
-
-                    <tr>
-
-                        <td>
-                            Sneha Kapoor
-                        </td>
-
-                        <td>
-                            B.Sc Physics
-                        </td>
-
-                        <td>
-                            Dec 14, 2024
-                        </td>
-
-                        <td>
-
-                            <span class="status-badge status-completed">
-                                Approved
-                            </span>
-
-                        </td>
-
-                        <td>
-                            Sarah Patel
-                        </td>
-
-                    </tr>
-
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         GENERATE REPORT SCRIPT
-         ========================= -->
-
-    <script type="text/javascript">
-
-        function generateReport() {
-
-            var reportTypeElement =
-                document.getElementById("reportType");
-
-            var reportPeriodElement =
-                document.getElementById("reportPeriod");
-
-            if (!reportTypeElement || !reportPeriodElement) {
-                alert("Report options could not be loaded.");
-                return;
+        </main>
+
+    <script>
+        // Sidebar Toggle
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.getElementById('mainContent').classList.toggle('sidebar-collapsed');
+        });
+
+        // Report Data Dictionary
+        const reportsData = {
+            'inquiry': {
+                title: '<i class="fas fa-clipboard-list me-2"></i>Inquiry Analytics Report',
+                sub: 'Detailed breakdown of lead generation channels, conversion rates, and inquiry statuses',
+                kpis: [
+                    { label: 'Total Inquiries', val: '1,284', icon: 'fas fa-inbox', color: 'var(--primary)' },
+                    { label: 'New This Month', val: '342', icon: 'fas fa-star', color: 'var(--info)' },
+                    { label: 'Converted Leads', val: '856', icon: 'fas fa-check-circle', color: 'var(--success)' },
+                    { label: 'Conversion Rate', val: '66.7%', icon: 'fas fa-percentage', color: 'var(--tertiary)' }
+                ],
+                tableHead: '<tr><th>Channel / Program</th><th>Inquiries Received</th><th>Contacted</th><th>Converted</th><th>Conversion Rate</th></tr>',
+                tableBody: `
+                    <tr><td class="fw-semibold">Website Direct Inquiries</td><td>480</td><td>420</td><td>320</td><td><span class="badge bg-success">66.6%</span></td></tr>
+                    <tr><td class="fw-semibold">Social Media Campaigns</td><td>350</td><td>290</td><td>210</td><td><span class="badge bg-success">60.0%</span></td></tr>
+                    <tr><td class="fw-semibold">Campus Walk-ins</td><td>280</td><td>280</td><td>230</td><td><span class="badge bg-success">82.1%</span></td></tr>
+                    <tr><td class="fw-semibold">Referrals & Alumni</td><td>174</td><td>170</td><td>152</td><td><span class="badge bg-success">87.3%</span></td></tr>
+                `
+            },
+            'counseling': {
+                title: '<i class="fas fa-user-tie me-2"></i>Counseling Performance Report',
+                sub: 'Analysis of scheduled sessions, completion rates, counselor feedback, and conversion',
+                kpis: [
+                    { label: 'Sessions Conducted', val: '412', icon: 'fas fa-calendar-check', color: 'var(--primary)' },
+                    { label: 'Completed Rate', val: '88.2%', icon: 'fas fa-check-double', color: 'var(--success)' },
+                    { label: 'Avg Rating', val: '4.8 / 5', icon: 'fas fa-star', color: 'var(--warning)' },
+                    { label: 'Lead Conversion', val: '64.1%', icon: 'fas fa-chart-line', color: 'var(--info)' }
+                ],
+                tableHead: '<tr><th>Counselor Name</th><th>Sessions Conducted</th><th>Completion Rate</th><th>Avg Rating</th><th>Conversions</th></tr>',
+                tableBody: `
+                    <tr><td class="fw-semibold">Sarah Patel</td><td>142</td><td>92.4%</td><td>★ 4.9</td><td>88 Admissions</td></tr>
+                    <tr><td class="fw-semibold">Rahul Gupta</td><td>130</td><td>86.1%</td><td>★ 4.7</td><td>74 Admissions</td></tr>
+                    <tr><td class="fw-semibold">Meera Patil</td><td>140</td><td>89.3%</td><td>★ 4.8</td><td>82 Admissions</td></tr>
+                `
+            },
+            'followup': {
+                title: '<i class="fas fa-phone-alt me-2"></i>Follow-up Efficiency Report',
+                sub: 'Metrics on follow-up tasks, turnaround response times, SLA adherence, and overdue resolution',
+                kpis: [
+                    { label: 'Follow-ups Logged', val: '890', icon: 'fas fa-tasks', color: 'var(--primary)' },
+                    { label: 'Completed Today', val: '45', icon: 'fas fa-check-circle', color: 'var(--success)' },
+                    { label: 'Overdue Count', val: '7', icon: 'fas fa-exclamation-triangle', color: 'var(--danger)' },
+                    { label: 'SLA Adherence', val: '94.2%', icon: 'fas fa-clock', color: 'var(--info)' }
+                ],
+                tableHead: '<tr><th>Follow-up Channel</th><th>Total Logged</th><th>Completed On-Time</th><th>Overdue</th><th>Response Rate</th></tr>',
+                tableBody: `
+                    <tr><td class="fw-semibold">Phone Calls</td><td>450</td><td>425</td><td>5</td><td><span class="badge bg-success">94.4%</span></td></tr>
+                    <tr><td class="fw-semibold">WhatsApp Messages</td><td>310</td><td>300</td><td>2</td><td><span class="badge bg-success">96.7%</span></td></tr>
+                    <tr><td class="fw-semibold">Email Outreach</td><td>130</td><td>120</td><td>0</td><td><span class="badge bg-success">92.3%</span></td></tr>
+                `
+            },
+            'application': {
+                title: '<i class="fas fa-file-alt me-2"></i>Application Pipeline Report',
+                sub: 'Comprehensive audit of application submissions, document verifications, approvals, and fees',
+                kpis: [
+                    { label: 'Total Applications', val: '253', icon: 'fas fa-file-import', color: 'var(--primary)' },
+                    { label: 'Under Review', val: '18', icon: 'fas fa-search', color: 'var(--warning)' },
+                    { label: 'Approved', val: '98', icon: 'fas fa-check-circle', color: 'var(--success)' },
+                    { label: 'Enrolled Students', val: '72', icon: 'fas fa-user-graduate', color: 'var(--tertiary)' }
+                ],
+                tableHead: '<tr><th>Course Program</th><th>Submitted</th><th>Doc Verified</th><th>Approved</th><th>Enrolled</th></tr>',
+                tableBody: `
+                    <tr><td class="fw-semibold">B.Tech Computer Science</td><td>98</td><td>85</td><td>42</td><td>34</td></tr>
+                    <tr><td class="fw-semibold">MBA Finance</td><td>65</td><td>58</td><td>30</td><td>22</td></tr>
+                    <tr><td class="fw-semibold">BCA</td><td>50</td><td>44</td><td>16</td><td>12</td></tr>
+                `
+            },
+            'admission': {
+                title: '<i class="fas fa-user-check me-2"></i>Admission Yield & Conversion Report',
+                sub: 'Analysis of offer letters issued, confirmed enrollments, fee collections, and student intake',
+                kpis: [
+                    { label: 'Total Admissions', val: '170', icon: 'fas fa-award', color: 'var(--primary)' },
+                    { label: 'Offer Letters Issued', val: '198', icon: 'fas fa-envelope-open-text', color: 'var(--info)' },
+                    { label: 'Fees Deposited', val: '₹1.85 Cr', icon: 'fas fa-rupee-sign', color: 'var(--success)' },
+                    { label: 'Admission Yield', val: '85.8%', icon: 'fas fa-chart-pie', color: 'var(--tertiary)' }
+                ],
+                tableHead: '<tr><th>Department</th><th>Applications</th><th>Admissions Offered</th><th>Confirmed Enrolled</th><th>Total Revenue (₹)</th></tr>',
+                tableBody: `
+                    <tr><td class="fw-semibold">Engineering Department</td><td>120</td><td>98</td><td>85</td><td>₹3.23 Cr</td></tr>
+                    <tr><td class="fw-semibold">Management Department</td><td>80</td><td>60</td><td>52</td><td>₹2.60 Cr</td></tr>
+                    <tr><td class="fw-semibold">Computer Applications</td><td>70</td><td>50</td><td>33</td><td>₹69.3 Lacs</td></tr>
+                `
+            },
+            'student': {
+                title: '<i class="fas fa-user-graduate me-2"></i>Student Demographics & Directory Report',
+                sub: 'Enrolled student breakdown by course, gender, batch year, and state demographics',
+                kpis: [
+                    { label: 'Active Students', val: '412', icon: 'fas fa-users', color: 'var(--primary)' },
+                    { label: 'New Batch 2024', val: '128', icon: 'fas fa-user-plus', color: 'var(--info)' },
+                    { label: 'Alumni Network', val: '44', icon: 'fas fa-graduation-cap', color: 'var(--warning)' },
+                    { label: 'Retention Rate', val: '97.2%', icon: 'fas fa-shield-alt', color: 'var(--success)' }
+                ],
+                tableHead: '<tr><th>Batch Year</th><th>Enrolled Students</th><th>Active</th><th>Alumni</th><th>Attendance Rate</th></tr>',
+                tableBody: `
+                    <tr><td class="fw-semibold">Batch 2024 - 2028</td><td>128</td><td>128</td><td>0</td><td>91.4%</td></tr>
+                    <tr><td class="fw-semibold">Batch 2023 - 2027</td><td>142</td><td>142</td><td>0</td><td>89.6%</td></tr>
+                    <tr><td class="fw-semibold">Batch 2022 - 2026</td><td>142</td><td>142</td><td>0</td><td>92.1%</td></tr>
+                    <tr><td class="fw-semibold">Batch 2020 - 2024</td><td>44</td><td>0</td><td>44</td><td>100.0%</td></tr>
+                `
+            },
+            'course': {
+                title: '<i class="fas fa-book me-2"></i>Course Performance & Seat Capacity Report',
+                sub: 'Analysis of course seat utilization, faculty allocations, tuition revenue, and course popularity',
+                kpis: [
+                    { label: 'Total Programs', val: '12', icon: 'fas fa-book-open', color: 'var(--primary)' },
+                    { label: 'Active Courses', val: '10', icon: 'fas fa-check-circle', color: 'var(--success)' },
+                    { label: 'Seat Occupancy', val: '86.4%', icon: 'fas fa-chair', color: 'var(--warning)' },
+                    { label: 'Total Intake Capacity', val: '520 Seats', icon: 'fas fa-layer-group', color: 'var(--info)' }
+                ],
+                tableHead: '<tr><th>Course Code</th><th>Program Name</th><th>Total Capacity</th><th>Seats Occupied</th><th>Occupancy %</th></tr>',
+                tableBody: `
+                    <tr><td class="fw-semibold text-primary">CSE-BTECH-001</td><td>B.Tech Computer Science</td><td>120</td><td>98</td><td><span class="badge bg-success">81.6%</span></td></tr>
+                    <tr><td class="fw-semibold text-primary">MBA-FIN-001</td><td>MBA Finance</td><td>60</td><td>52</td><td><span class="badge bg-success">86.6%</span></td></tr>
+                    <tr><td class="fw-semibold text-primary">BCA-001</td><td>BCA</td><td>90</td><td>75</td><td><span class="badge bg-success">83.3%</span></td></tr>
+                `
+            },
+            'counselor-performance': {
+                title: '<i class="fas fa-award me-2"></i>Counselor Performance & Productivity Report',
+                sub: 'Comprehensive audit of individual counselor metrics, lead resolution SLAs, and conversion output',
+                kpis: [
+                    { label: 'Active Counselors', val: '8', icon: 'fas fa-user-tie', color: 'var(--primary)' },
+                    { label: 'Leads Handled', val: '1,284', icon: 'fas fa-clipboard-list', color: 'var(--info)' },
+                    { label: 'Top Performer', val: 'Sarah Patel', icon: 'fas fa-crown', color: 'var(--warning)' },
+                    { label: 'Avg Conversion', val: '64.1%', icon: 'fas fa-chart-bar', color: 'var(--success)' }
+                ],
+                tableHead: '<tr><th>Counselor Name</th><th>Leads Assigned</th><th>Sessions Held</th><th>Students Enrolled</th><th>Satisfaction Score</th></tr>',
+                tableBody: `
+                    <tr><td class="fw-semibold">Sarah Patel</td><td>420</td><td>142</td><td>88</td><td>★ 4.9 / 5.0</td></tr>
+                    <tr><td class="fw-semibold">Rahul Gupta</td><td>380</td><td>130</td><td>74</td><td>★ 4.7 / 5.0</td></tr>
+                    <tr><td class="fw-semibold">Meera Patil</td><td>410</td><td>140</td><td>82</td><td>★ 4.8 / 5.0</td></tr>
+                `
             }
+        };
 
-            var reportType =
-                reportTypeElement.value;
+        // Report Switching Logic
+        document.querySelectorAll('.report-tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.report-tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
 
-            var reportPeriod =
-                reportPeriodElement.value;
+                const reportKey = this.getAttribute('data-report');
+                const data = reportsData[reportKey];
+                if (!data) return;
 
-            alert(
-                "Report Generated Successfully!\n\n" +
-                "Report Type: " +
-                reportType +
-                "\n" +
-                "Date Range: " +
-                reportPeriod +
-                "\n\n" +
-                "Your report is ready to view."
-            );
+                // Update Banner Title & Subtitle
+                document.getElementById('reportBannerTitle').innerHTML = data.title;
+                document.getElementById('reportBannerSub').innerText = data.sub;
 
+                // Update KPI Cards
+                const kpiContainer = document.getElementById('kpiContainer');
+                kpiContainer.innerHTML = data.kpis.map(kpi => `
+                    <div class="kpi-mini">
+                        <div class="kpi-mini-icon" style="background:rgba(79,70,229,.1);color:${kpi.color}"><i class="${kpi.icon}"></i></div>
+                        <p class="kpi-mini-value" style="color:${kpi.color}">${kpi.val}</p>
+                        <p class="kpi-mini-label">${kpi.label}</p>
+                    </div>
+                `).join('');
+
+                // Update Table
+                document.getElementById('reportTableHead').innerHTML = data.tableHead;
+                document.getElementById('reportTableBody').innerHTML = data.tableBody;
+            });
+        });
+
+        // Export PDF Function
+        function exportPDF() {
+            alert('Generating PDF Document...\nOpening print/PDF export preview window.');
+            window.print();
         }
 
+        // Export Excel Function
+        function exportExcel() {
+            alert('Generating Excel Spreadsheet (.xlsx)...\nReport dataset downloaded successfully.');
+        }
     </script>
-
 </asp:Content>

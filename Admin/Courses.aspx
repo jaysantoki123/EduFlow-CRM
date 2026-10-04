@@ -1,1564 +1,573 @@
-﻿<%@ Page Title="Course Management"
-    Language="C#"
-    MasterPageFile="~/Admin/Site1.Master"
-    AutoEventWireup="true"
-    CodeBehind="Courses.aspx.cs"
-    Inherits="EduCRM.Courses" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Admin/Site1.Master" AutoEventWireup="true" CodeBehind="Courses.aspx.cs" Inherits="EduFlow.Admin.Courses" %>
 
-<asp:Content ID="HeadContent"
-    ContentPlaceHolderID="head"
-    runat="server">
-
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
-
-        /* =====================================================
-           COURSE MANAGEMENT
-           ===================================================== */
-
-        .courses-page {
-            width: 100%;
-            min-height: calc(100vh - 70px);
-            padding: 20px 10px;
-            background: #F8FAFC;
-            font-family: 'Inter', Arial, sans-serif;
-            color: #1E293B;
-            box-sizing: border-box;
-        }
-
-        .courses-page *,
-        .courses-page *::before,
-        .courses-page *::after {
-            box-sizing: border-box;
-        }
-
-
-        /* ================= HEADER ================= */
-
-        .courses-header {
+        .view-toggle {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
+            background: var(--surface-container);
+            border-radius: var(--radius-full);
+            padding: 4px;
+            gap: 4px;
         }
 
-        .courses-title h1 {
-            margin: 0 0 4px 0;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 23px;
-            font-weight: 600;
-            color: #172033;
-        }
-
-        .courses-title p {
-            margin: 0;
-            color: #64748B;
-            font-size: 9px;
-        }
-
-
-        /* ================= HEADER BUTTONS ================= */
-
-        .course-header-actions {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .course-view-btn {
-            height: 25px;
-            padding: 0 10px;
+        .view-toggle-btn {
+            padding: 8px 16px;
             border: none;
-            border-radius: 14px;
-            background: #EEF2FF;
-            color: #64748B;
-            font-size: 8px;
+            background: transparent;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--on-surface-variant);
             cursor: pointer;
-            font-family: 'Inter', Arial, sans-serif;
-            transition: all 0.2s ease;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .course-view-btn:hover {
-            background: #E0E7FF;
-            color: #4F46E5;
-            transform: translateY(-2px);
+            .view-toggle-btn.active {
+                background: var(--primary);
+                color: white;
+                box-shadow: 0 2px 8px rgba(79,70,229,.3);
+            }
+
+        .filter-bar {
+            background: rgba(255,255,255,.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
         }
 
-        .course-view-btn.active {
-            background: #4F46E5;
-            color: #FFFFFF;
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--spacing-md);
         }
 
-        .course-view-btn i {
-            margin-right: 4px;
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
-        .add-course-btn {
-            height: 27px;
+        .filter-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--on-surface-variant);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .filter-select, .filter-input {
+            height: 40px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
             padding: 0 12px;
-            border: none;
-            border-radius: 5px;
-            background: #4F46E5;
-            color: #FFFFFF;
-            font-size: 8px;
-            cursor: pointer;
-            font-family: 'Inter', Arial, sans-serif;
-            box-shadow: 0 2px 5px rgba(79,70,229,.18);
-            transition: all 0.2s ease;
+            font-size: 13px;
+            background: white;
         }
 
-        .add-course-btn:hover {
-            background: #4338CA;
-            color: #FFFFFF;
-            transform: translateY(-3px);
-            box-shadow: 0 7px 15px rgba(79,70,229,.25);
-        }
+            .filter-select:focus, .filter-input:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+            }
 
-        .add-course-btn i {
-            margin-right: 4px;
-        }
-
-
-        /* ================= STATISTICS ================= */
-
-        .course-stats {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .course-stat-card {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 8px;
-            min-height: 70px;
-            padding: 11px;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
-        }
-
-        .course-stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(15,23,42,.10);
-            border-color: #C7D2FE;
-        }
-
-        .course-stat-content {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-        }
-
-        .course-stat-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 7px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-            font-size: 12px;
-            transition: transform 0.2s ease;
-        }
-
-        .course-stat-card:hover .course-stat-icon {
-            transform: scale(1.08);
-        }
-
-        .course-purple {
-            background: #EEF2FF;
-            color: #4F46E5;
-        }
-
-        .course-green {
-            background: #ECFDF3;
-            color: #22C55E;
-        }
-
-        .course-orange {
-            background: #FFF7E6;
-            color: #F59E0B;
-        }
-
-        .course-blue {
-            background: #EFF6FF;
-            color: #2563EB;
-        }
-
-        .course-stat-label {
-            font-size: 7px;
-            color: #64748B;
-            text-transform: uppercase;
-            letter-spacing: .35px;
-            margin-bottom: 3px;
-        }
-
-        .course-stat-number {
-            font-size: 17px;
-            font-weight: 600;
-            color: #1E293B;
-        }
-
-
-        /* ================= FILTER ================= */
-
-        .course-filter-box {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 8px;
-            padding: 11px;
-            margin-bottom: 10px;
-
-            transition:
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
-        }
-
-        .course-filter-box:hover {
-            box-shadow: 0 6px 18px rgba(15,23,42,.06);
-            border-color: #CBD5E1;
-        }
-
-        .course-filters {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 8px;
-        }
-
-        .course-filter-field label {
-            display: block;
-            margin-bottom: 4px;
-            color: #64748B;
-            font-size: 6.5px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .course-input,
-        .course-select {
-            width: 100%;
-            height: 27px;
-            padding: 0 8px;
-            border: 1px solid #E2E8F0;
-            border-radius: 5px;
-            background: #FFFFFF;
-            color: #475569;
-            font-family: 'Inter', Arial, sans-serif;
-            font-size: 7px;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .course-input:focus,
-        .course-select:focus {
-            border-color: #A5B4FC;
-            box-shadow: 0 0 0 2px rgba(99,102,241,.08);
-        }
-
-
-        /* ================= COURSE GRID ================= */
-
+        /* Course Grid */
         .course-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 9px;
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: var(--spacing-lg);
         }
-
-
-        /* ================= COURSE CARD ================= */
 
         .course-card {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 8px;
+            background: rgba(255,255,255,.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
             overflow: hidden;
-            box-shadow: 0 1px 4px rgba(15,23,42,.025);
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                border-color 0.2s ease;
+            transition: all .3s;
         }
 
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(15,23,42,.10);
-            border-color: #C7D2FE;
-        }
+            .course-card:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-lg);
+            }
 
-
-        /* ================= COURSE COLOR HEADER ================= */
-
-        .course-card-header {
-            height: 48px;
-            padding: 7px 9px;
+        .course-card-banner {
+            height: 100px;
             position: relative;
-            color: #FFFFFF;
-        }
-
-        .header-purple {
-            background: linear-gradient(135deg, #4338CA, #6366F1);
-        }
-
-        .header-blue {
-            background: linear-gradient(135deg, #0369A1, #06B6D4);
-        }
-
-        .header-violet {
-            background: linear-gradient(135deg, #6D28D9, #8B5CF6);
-        }
-
-        .header-green {
-            background: linear-gradient(135deg, #059669, #22C55E);
-        }
-
-        .header-cyan {
-            background: linear-gradient(135deg, #0284C7, #06B6D4);
-        }
-
-        .header-orange {
-            background: linear-gradient(135deg, #F97316, #EF4444);
-        }
-
-        .course-code {
-            display: inline-block;
-            padding: 2px 5px;
-            border-radius: 8px;
-            background: rgba(255,255,255,.18);
-            font-size: 6px;
-            font-weight: 600;
-        }
-
-
-        /* ================= COURSE ACTION ICONS ================= */
-
-        .course-card-icons {
-            position: absolute;
-            right: 8px;
-            top: 7px;
-            display: flex;
-            gap: 4px;
-        }
-
-        .course-card-icon {
-            width: 18px;
-            height: 18px;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
-            background: rgba(255,255,255,.17);
-            color: #FFFFFF;
-            font-size: 7px;
-            cursor: pointer;
-            border: none;
-            transition:
-                background 0.2s ease,
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
         }
 
-        .course-card-icon:hover {
-            background: #FFFFFF;
-            color: #4F46E5;
-            transform: translateY(-2px) scale(1.08);
-            box-shadow: 0 3px 8px rgba(0,0,0,.15);
-        }
+            .course-card-banner.engineering {
+                background: linear-gradient(135deg,#4f46e5,#0051d5);
+            }
 
-        .course-delete-icon:hover {
-            color: #DC2626;
-        }
+            .course-card-banner.management {
+                background: linear-gradient(135deg,#0051d5,#006d62);
+            }
 
-        .course-main-icon {
+            .course-card-banner.computer {
+                background: linear-gradient(135deg,#6366f1,#8b5cf6);
+            }
+
+        .course-banner-icon {
+            font-size: 42px;
+            color: rgba(255,255,255,.18);
             position: absolute;
-            right: 9px;
-            bottom: 5px;
-            font-size: 24px;
-            opacity: .14;
+            right: 20px;
+            bottom: 10px;
         }
 
-
-        /* ================= COURSE BODY ================= */
+        .course-banner-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(255,255,255,.25);
+            backdrop-filter: blur(10px);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
 
         .course-card-body {
-            padding: 10px;
+            padding: var(--spacing-lg);
         }
 
-        .course-name {
-            margin: 0 0 2px 0;
-            color: #334155;
-            font-size: 9px;
+        .course-card-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--on-surface);
+            margin: 0 0 2px;
+        }
+
+        .course-card-code {
+            font-size: 12px;
+            color: var(--primary);
             font-weight: 600;
-            transition: color 0.2s ease;
-        }
-
-        .course-name:hover {
-            color: #4F46E5;
-        }
-
-        .course-short-code {
-            margin-bottom: 6px;
-            color: #4F46E5;
-            font-size: 6px;
-            font-weight: 600;
-        }
-
-        .course-description {
-            height: 27px;
-            margin-bottom: 7px;
-            color: #64748B;
-            font-size: 6.5px;
-            line-height: 10px;
-            overflow: hidden;
-        }
-
-
-        /* ================= COURSE INFORMATION ================= */
-
-        .course-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px 8px;
-            margin-bottom: 7px;
-        }
-
-        .course-info-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: #475569;
-            font-size: 6.5px;
-            transition: color 0.2s ease;
-        }
-
-        .course-info-item i {
-            width: 10px;
-            color: #4F46E5;
-            font-size: 7px;
-            text-align: center;
-        }
-
-        .course-info-item:hover {
-            color: #4F46E5;
-        }
-
-
-        /* ================= TAGS ================= */
-
-        .course-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 3px;
-            padding-top: 6px;
-            border-top: 1px solid #F1F5F9;
-        }
-
-        .course-tag {
-            padding: 3px 6px;
-            border-radius: 8px;
-            background: #EEF2FF;
-            color: #4F46E5;
-            font-size: 5.5px;
-            transition: transform 0.2s ease;
-        }
-
-        .course-tag:hover {
-            transform: translateY(-2px);
-        }
-
-        .course-tag.green {
-            background: #ECFDF3;
-            color: #16A34A;
-        }
-
-        .course-tag.orange {
-            background: #FFF7E6;
-            color: #D97706;
-        }
-
-
-        /* ================= COURSE FOOTER ================= */
-
-        .course-card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 7px 10px;
-            border-top: 1px solid #F1F5F9;
-        }
-
-        .course-students {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            color: #64748B;
-            font-size: 6.5px;
-        }
-
-        .course-students i {
-            color: #4F46E5;
-            font-size: 7px;
+            margin: 0 0 8px;
         }
 
         .course-status {
             display: inline-flex;
             align-items: center;
-            gap: 3px;
-            padding: 3px 6px;
-            border-radius: 8px;
-            background: #ECFDF3;
-            color: #16A34A;
-            font-size: 5.5px;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
             font-weight: 600;
         }
 
-        .course-status.upcoming {
-            background: #FFF7E6;
-            color: #D97706;
+            .course-status.active {
+                background: rgba(34,197,94,.1);
+                color: var(--success);
+            }
+
+            .course-status.inactive {
+                background: rgba(239,68,68,.1);
+                color: var(--danger);
+            }
+
+        .table-view {
+            display: none;
         }
 
-        .course-status i {
-            font-size: 4px;
+            .table-view.active {
+                display: block;
+            }
+
+        .grid-view.active {
+            display: grid;
         }
 
-
-        /* ================= DELETE ANIMATION ================= */
-
-        .course-card.removing {
-            opacity: 0;
-            transform: scale(.94);
-            transition: all 0.25s ease;
+        .course-table-card {
+            background: rgba(255,255,255,.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
         }
 
-
-        /* ================= RESPONSIVE ================= */
-
-        @media (max-width: 1000px) {
-
-            .course-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .course-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
+        .course-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        @media (max-width: 650px) {
-
-            .courses-page {
-                padding: 15px;
+            .course-table thead {
+                background: var(--surface-container-low);
             }
 
-            .courses-header {
-                align-items: flex-start;
-                flex-direction: column;
+            .course-table th {
+                padding: 14px 16px;
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--on-surface-variant);
+                text-transform: uppercase;
+                border-bottom: 1px solid var(--border-subtle);
+                white-space: nowrap;
             }
 
-            .course-stats {
-                grid-template-columns: 1fr;
+            .course-table td {
+                padding: 14px 16px;
+                border-bottom: 1px solid var(--border-subtle);
+                font-size: 14px;
+                vertical-align: middle;
             }
 
-            .course-filters {
-                grid-template-columns: 1fr;
-            }
-
-            .course-grid {
-                grid-template-columns: 1fr;
-            }
-
+        .action-btn-sm {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-subtle);
+            background: white;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
+            .action-btn-sm:hover {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+            .action-btn-sm.delete:hover {
+                background: var(--danger);
+                color: white;
+                border-color: var(--danger);
+            }
     </style>
-
 </asp:Content>
-
-
-<asp:Content ID="MainContent"
-    ContentPlaceHolderID="ContentPlaceHolder1"
-    runat="server">
-
-    <div class="courses-page">
-
-        <!-- ================= HEADER ================= -->
-
-        <div class="courses-header">
-
-            <div class="courses-title">
-
-                <h1>
-                    Course Management
-                </h1>
-
-                <p>
-                    Manage all academic programs and courses
-                </p>
-
+<asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
+    <main class="main-content" id="mainContent">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                <div class="topbar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="courseSearchInput" placeholder="Search course name or code...">
+                </div>
             </div>
-
-            <div class="course-header-actions">
-
-                <button type="button"
-                        class="course-view-btn">
-
-                    <i class="fas fa-list"></i>
-                    Table
-
-                </button>
-
-                <a href="<%= ResolveUrl("~/Admin/AddCourse.aspx") %>"
-                   class="add-course-btn"
-                   style="display:flex; align-items:center; justify-content:center; text-decoration:none;">
-
-                    <i class="fas fa-plus"></i>
-                    &nbsp; Add Course
-
-                </a>
-
+            <div class="topbar-right">
+                <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge"></span></button>
+                <button class="topbar-icon-btn"><i class="fas fa-user-circle"></i></button>
             </div>
+        </header>
 
-        </div>
-
-
-        <!-- ================= STATISTICS ================= -->
-
-        <div class="course-stats">
-
-            <div class="course-stat-card">
-
-                <div class="course-stat-content">
-
-                    <div class="course-stat-icon course-purple">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-
-                    <div>
-                        <div class="course-stat-label">
-                            Total Courses
-                        </div>
-
-                        <div class="course-stat-number">
-                            12
-                        </div>
-                    </div>
-
+        <div class="content-area">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div>
+                    <h1 class="headline-lg mb-1">Course Management</h1>
+                    <p class="text-muted mb-0">Manage academic programs, course codes, tuition fees, and status activation</p>
                 </div>
-
-            </div>
-
-
-            <div class="course-stat-card">
-
-                <div class="course-stat-content">
-
-                    <div class="course-stat-icon course-green">
-                        <i class="fas fa-check"></i>
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <div class="view-toggle">
+                        <button type="button" class="view-toggle-btn active" id="gridViewBtn"><i class="fas fa-th-large"></i>Grid View</button>
+                        <button type="button" class="view-toggle-btn" id="tableViewBtn"><i class="fas fa-list"></i>Table View</button>
                     </div>
-
-                    <div>
-                        <div class="course-stat-label">
-                            Active
-                        </div>
-
-                        <div class="course-stat-number">
-                            10
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="course-stat-card">
-
-                <div class="course-stat-content">
-
-                    <div class="course-stat-icon course-orange">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-
-                    <div>
-                        <div class="course-stat-label">
-                            Total Students
-                        </div>
-
-                        <div class="course-stat-number">
-                            456
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="course-stat-card">
-
-                <div class="course-stat-content">
-
-                    <div class="course-stat-icon course-blue">
-                        <i class="fas fa-sitemap"></i>
-                    </div>
-
-                    <div>
-                        <div class="course-stat-label">
-                            Departments
-                        </div>
-
-                        <div class="course-stat-number">
-                            5
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ================= FILTERS ================= -->
-
-        <div class="course-filter-box">
-
-            <div class="course-filters">
-
-                <div class="course-filter-field">
-
-                    <label>
-                        Department
-                    </label>
-
-                    <select class="course-select">
-
-                        <option>All Departments</option>
-                        <option>Computer Engineering</option>
-                        <option>Management</option>
-                        <option>Science</option>
-                        <option>Arts</option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="course-filter-field">
-
-                    <label>
-                        Level
-                    </label>
-
-                    <select class="course-select">
-
-                        <option>All Levels</option>
-                        <option>Undergraduate</option>
-                        <option>Postgraduate</option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="course-filter-field">
-
-                    <label>
-                        Status
-                    </label>
-
-                    <select class="course-select">
-
-                        <option>All Status</option>
-                        <option>Active</option>
-                        <option>Upcoming</option>
-                        <option>Inactive</option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="course-filter-field">
-
-                    <label>
-                        Search
-                    </label>
-
-                    <input type="text"
-                           class="course-input"
-                           placeholder="Course name or code..." />
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ================= COURSE GRID ================= -->
-
-        <div class="course-grid">
-
-
-            <!-- ================= COURSE 1 ================= -->
-
-            <div class="course-card"
-                 data-course="B.Tech Computer Science">
-
-                <div class="course-card-header header-purple">
-
-                    <span class="course-code">
-                        UG
-                    </span>
-
-                    <div class="course-card-icons">
-
-                        <!-- EDIT -->
-                        <button type="button"
-                                class="course-card-icon"
-                                title="Edit Course"
-                                onclick="editCourse(this);">
-
-                            <i class="fas fa-pen"></i>
-
-                        </button>
-
-                        <!-- DELETE -->
-                        <button type="button"
-                                class="course-card-icon course-delete-icon"
-                                title="Delete Course"
-                                onclick="deleteCourse(this);">
-
-                            <i class="fas fa-trash"></i>
-
-                        </button>
-
-                    </div>
-
-                    <i class="fas fa-book course-main-icon"></i>
-
-                </div>
-
-
-                <div class="course-card-body">
-
-                    <a href="<%= ResolveUrl("~/Admin/CourseDetails.aspx") %>"
-                       class="course-name"
-                       style="text-decoration:none; display:block;">
-
-                        B.Tech Computer Science
-
+                    <a class="btn btn-primary" href="<%= ResolveUrl("~/Admin/AddCourse.aspx") %>">
+                        <i class="fas fa-plus me-1"></i>Add Course
                     </a>
-
-                    <div class="course-short-code">
-                        CSE-BTECH-001
-                    </div>
-
-                    <div class="course-description">
-                        Bachelor of Technology in Computer Science and Engineering,
-                        covering programming, data structures and computing.
-                    </div>
-
-                    <div class="course-info">
-
-                        <div class="course-info-item">
-                            <i class="far fa-clock"></i>
-                            4 Years
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-indian-rupee-sign"></i>
-                            ₹3,80,000/year
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-user-group"></i>
-                            120 Seats
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-book"></i>
-                            8 Semesters
-                        </div>
-
-                    </div>
-
-                    <div class="course-tags">
-
-                        <span class="course-tag">
-                            Engineering
-                        </span>
-
-                        <span class="course-tag">
-                            Full-Time
-                        </span>
-
-                        <span class="course-tag green">
-                            Active
-                        </span>
-
-                    </div>
-
                 </div>
+            </div>
+            
 
-
-                <div class="course-card-footer">
-
-                    <span class="course-students">
-                        <i class="fas fa-users"></i>
-                        98 Students
-                    </span>
-
-                    <span class="course-status">
-                        <i class="fas fa-circle"></i>
-                        Active
-                    </span>
-
+            <!-- Stats Overview -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon primary"><i class="fas fa-book-open"></i></div>
+                        <div class="stats-content">
+                            <div class="stats-label">Total Courses</div>
+                            <div class="stats-value">12</div>
+                        </div>
+                    </div>
                 </div>
-
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon success"><i class="fas fa-check-circle"></i></div>
+                        <div class="stats-content">
+                            <div class="stats-label">Active Programs</div>
+                            <div class="stats-value">10</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon warning"><i class="fas fa-pause-circle"></i></div>
+                        <div class="stats-content">
+                            <div class="stats-label">Inactive Programs</div>
+                            <div class="stats-value">2</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon info"><i class="fas fa-layer-group"></i></div>
+                        <div class="stats-content">
+                            <div class="stats-label">Departments</div>
+                            <div class="stats-value">5</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-
-            <!-- ================= COURSE 2 ================= -->
-
-            <div class="course-card"
-                 data-course="MBA Finance">
-
-                <div class="course-card-header header-blue">
-
-                    <span class="course-code">
-                        PG
-                    </span>
-
-                    <div class="course-card-icons">
-
-                        <button type="button"
-                                class="course-card-icon"
-                                title="Edit Course"
-                                onclick="editCourse(this);">
-
-                            <i class="fas fa-pen"></i>
-
-                        </button>
-
-                        <button type="button"
-                                class="course-card-icon course-delete-icon"
-                                title="Delete Course"
-                                onclick="deleteCourse(this);">
-
-                            <i class="fas fa-trash"></i>
-
-                        </button>
-
+            <!-- 1. Grid View (Cards with Actions) -->
+            <div class="course-grid grid-view active" id="gridView">
+                <!-- Course 1 -->
+                <div class="course-card">
+                    <div class="course-card-banner engineering">
+                        <i class="fas fa-microchip course-banner-icon"></i>
+                        <span class="course-banner-badge">UG • Engineering</span>
                     </div>
-
-                    <i class="fas fa-chart-pie course-main-icon"></i>
-
+                    <div class="course-card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h3 class="course-card-name">B.Tech Computer Science</h3>
+                                <p class="course-card-code">CSE-BTECH-001</p>
+                            </div>
+                            <span class="course-status active" id="cardStatus-1"><i class="fas fa-circle" style="font-size: 6px"></i>Active</span>
+                        </div>
+                        <div class="row g-2 text-muted small my-2">
+                            <div class="col-6"><i class="far fa-clock text-primary me-1"></i>4 Years</div>
+                            <div class="col-6"><i class="fas fa-rupee-sign text-primary me-1"></i>₹3.8L / Year</div>
+                            <div class="col-6"><i class="fas fa-chair text-primary me-1"></i>120 Seats</div>
+                            <div class="col-6"><i class="fas fa-users text-primary me-1"></i>98 Enrolled</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" checked id="statusSwitch-1" onchange="toggleCourseStatus(1, 'B.Tech Computer Science', this)">
+                            <label class="form-check-label small text-muted" for="statusSwitch-1">Active</label>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-primary" title="Edit Course" onclick="openEditCourseModal(1, 'CSE-BTECH-001', 'B.Tech Computer Science', 'Engineering', 'Undergraduate', '4 Years', '380000', '120')"><i class="fas fa-edit me-1"></i>Edit</button>
+                            <button class="btn btn-sm btn-outline-danger" title="Delete Course" onclick="openDeleteModal('B.Tech Computer Science')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
                 </div>
 
-
-                <div class="course-card-body">
-
-                    <h3 class="course-name">
-                        MBA Finance
-                    </h3>
-
-                    <div class="course-short-code">
-                        MBA-FIN-001
+                <!-- Course 2 -->
+                <div class="course-card">
+                    <div class="course-card-banner management">
+                        <i class="fas fa-chart-pie course-banner-icon"></i>
+                        <span class="course-banner-badge">PG • Management</span>
                     </div>
-
-                    <div class="course-description">
-                        Master of Business Administration with Finance
-                        specialization, covering corporate finance.
+                    <div class="course-card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h3 class="course-card-name">MBA Finance</h3>
+                                <p class="course-card-code">MBA-FIN-001</p>
+                            </div>
+                            <span class="course-status active" id="cardStatus-2"><i class="fas fa-circle" style="font-size: 6px"></i>Active</span>
+                        </div>
+                        <div class="row g-2 text-muted small my-2">
+                            <div class="col-6"><i class="far fa-clock text-primary me-1"></i>2 Years</div>
+                            <div class="col-6"><i class="fas fa-rupee-sign text-primary me-1"></i>₹5.0L / Year</div>
+                            <div class="col-6"><i class="fas fa-chair text-primary me-1"></i>60 Seats</div>
+                            <div class="col-6"><i class="fas fa-users text-primary me-1"></i>52 Enrolled</div>
+                        </div>
                     </div>
-
-                    <div class="course-info">
-
-                        <div class="course-info-item">
-                            <i class="far fa-clock"></i>
-                            2 Years
+                    <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" checked id="statusSwitch-2" onchange="toggleCourseStatus(2, 'MBA Finance', this)">
+                            <label class="form-check-label small text-muted" for="statusSwitch-2">Active</label>
                         </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-indian-rupee-sign"></i>
-                            ₹2,50,000/year
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-primary" title="Edit Course" onclick="openEditCourseModal(2, 'MBA-FIN-001', 'MBA Finance', 'Management', 'Postgraduate', '2 Years', '500000', '60')"><i class="fas fa-edit me-1"></i>Edit</button>
+                            <button class="btn btn-sm btn-outline-danger" title="Delete Course" onclick="openDeleteModal('MBA Finance')"><i class="fas fa-trash"></i></button>
                         </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-user-group"></i>
-                            60 Seats
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-book"></i>
-                            4 Semesters
-                        </div>
-
                     </div>
-
-                    <div class="course-tags">
-
-                        <span class="course-tag">
-                            Management
-                        </span>
-
-                        <span class="course-tag">
-                            Full-Time
-                        </span>
-
-                        <span class="course-tag green">
-                            Active
-                        </span>
-
-                    </div>
-
                 </div>
 
-
-                <div class="course-card-footer">
-
-                    <span class="course-students">
-                        <i class="fas fa-users"></i>
-                        52 Students
-                    </span>
-
-                    <span class="course-status">
-                        <i class="fas fa-circle"></i>
-                        Active
-                    </span>
-
+                <!-- Course 3 -->
+                <div class="course-card">
+                    <div class="course-card-banner computer">
+                        <i class="fas fa-laptop-code course-banner-icon"></i>
+                        <span class="course-banner-badge">UG • Computer Apps</span>
+                    </div>
+                    <div class="course-card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h3 class="course-card-name">BCA</h3>
+                                <p class="course-card-code">BCA-001</p>
+                            </div>
+                            <span class="course-status active" id="cardStatus-3"><i class="fas fa-circle" style="font-size: 6px"></i>Active</span>
+                        </div>
+                        <div class="row g-2 text-muted small my-2">
+                            <div class="col-6"><i class="far fa-clock text-primary me-1"></i>3 Years</div>
+                            <div class="col-6"><i class="fas fa-rupee-sign text-primary me-1"></i>₹2.1L / Year</div>
+                            <div class="col-6"><i class="fas fa-chair text-primary me-1"></i>90 Seats</div>
+                            <div class="col-6"><i class="fas fa-users text-primary me-1"></i>75 Enrolled</div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" checked id="statusSwitch-3" onchange="toggleCourseStatus(3, 'BCA', this)">
+                            <label class="form-check-label small text-muted" for="statusSwitch-3">Active</label>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-primary" title="Edit Course" onclick="openEditCourseModal(3, 'BCA-001', 'BCA', 'Computer Applications', 'Undergraduate', '3 Years', '210000', '90')"><i class="fas fa-edit me-1"></i>Edit</button>
+                            <button class="btn btn-sm btn-outline-danger" title="Delete Course" onclick="openDeleteModal('BCA')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
                 </div>
-
             </div>
 
-
-            <!-- ================= COURSE 3 ================= -->
-
-            <div class="course-card"
-                 data-course="BCA">
-
-                <div class="course-card-header header-violet">
-
-                    <span class="course-code">
-                        UG
-                    </span>
-
-                    <div class="course-card-icons">
-
-                        <button type="button"
-                                class="course-card-icon"
-                                title="Edit Course"
-                                onclick="editCourse(this);">
-
-                            <i class="fas fa-pen"></i>
-
-                        </button>
-
-                        <button type="button"
-                                class="course-card-icon course-delete-icon"
-                                title="Delete Course"
-                                onclick="deleteCourse(this);">
-
-                            <i class="fas fa-trash"></i>
-
-                        </button>
-
+            <!-- 2. Table View -->
+            <div class="table-view" id="tableView">
+                <div class="course-table-card">
+                    <div style="overflow-x: auto">
+                        <table class="course-table" id="courseTable">
+                            <thead>
+                                <tr>
+                                    <th>Course Name</th>
+                                    <th>Code</th>
+                                    <th>Department</th>
+                                    <th>Duration</th>
+                                    <th>Annual Fee</th>
+                                    <th>Total Seats</th>
+                                    <th>Status</th>
+                                    <th>Actions (Edit / Delete / Toggle)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong class="text-dark">B.Tech Computer Science</strong></td>
+                                    <td><span class="text-primary fw-bold">CSE-BTECH-001</span></td>
+                                    <td>Engineering</td>
+                                    <td>4 Years</td>
+                                    <td>₹3,80,000</td>
+                                    <td>120</td>
+                                    <td><span class="course-status active"><i class="fas fa-circle" style="font-size: 6px"></i>Active</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="action-btn-sm" title="Edit Course" onclick="openEditCourseModal(1, 'CSE-BTECH-001', 'B.Tech Computer Science', 'Engineering', 'Undergraduate', '4 Years', '380000', '120')"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn-sm delete" title="Delete Course" onclick="openDeleteModal('B.Tech Computer Science')"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="text-dark">MBA Finance</strong></td>
+                                    <td><span class="text-primary fw-bold">MBA-FIN-001</span></td>
+                                    <td>Management</td>
+                                    <td>2 Years</td>
+                                    <td>₹5,00,000</td>
+                                    <td>60</td>
+                                    <td><span class="course-status active"><i class="fas fa-circle" style="font-size: 6px"></i>Active</span></td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="action-btn-sm" title="Edit Course" onclick="openEditCourseModal(2, 'MBA-FIN-001', 'MBA Finance', 'Management', 'Postgraduate', '2 Years', '500000', '60')"><i class="fas fa-edit"></i></button>
+                                            <button class="action-btn-sm delete" title="Delete Course" onclick="openDeleteModal('MBA Finance')"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-
-                    <i class="fas fa-laptop-code course-main-icon"></i>
-
                 </div>
-
-
-                <div class="course-card-body">
-
-                    <h3 class="course-name">
-                        BCA
-                    </h3>
-
-                    <div class="course-short-code">
-                        BCA-001
-                    </div>
-
-                    <div class="course-description">
-                        Bachelor of Computer Applications.
-                        Comprehensive computer programming and applications.
-                    </div>
-
-                    <div class="course-info">
-
-                        <div class="course-info-item">
-                            <i class="far fa-clock"></i>
-                            3 Years
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-indian-rupee-sign"></i>
-                            ₹2,10,000/year
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-user-group"></i>
-                            90 Seats
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-book"></i>
-                            6 Semesters
-                        </div>
-
-                    </div>
-
-                    <div class="course-tags">
-
-                        <span class="course-tag">
-                            Computer
-                        </span>
-
-                        <span class="course-tag">
-                            Full-Time
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="course-card-footer">
-
-                    <span class="course-students">
-                        <i class="fas fa-users"></i>
-                        75 Students
-                    </span>
-
-                    <span class="course-status">
-                        <i class="fas fa-circle"></i>
-                        Active
-                    </span>
-
-                </div>
-
             </div>
-
-
-            <!-- ================= COURSE 4 ================= -->
-
-            <div class="course-card"
-                 data-course="B.Sc Physics">
-
-                <div class="course-card-header header-green">
-
-                    <span class="course-code">
-                        UG
-                    </span>
-
-                    <div class="course-card-icons">
-
-                        <button type="button"
-                                class="course-card-icon"
-                                title="Edit Course"
-                                onclick="editCourse(this);">
-
-                            <i class="fas fa-pen"></i>
-
-                        </button>
-
-                        <button type="button"
-                                class="course-card-icon course-delete-icon"
-                                title="Delete Course"
-                                onclick="deleteCourse(this);">
-
-                            <i class="fas fa-trash"></i>
-
-                        </button>
-
-                    </div>
-
-                    <i class="fas fa-atom course-main-icon"></i>
-
-                </div>
-
-
-                <div class="course-card-body">
-
-                    <h3 class="course-name">
-                        B.Sc Physics
-                    </h3>
-
-                    <div class="course-short-code">
-                        BSC-PHY-001
-                    </div>
-
-                    <div class="course-description">
-                        Bachelor of Science in Physics. Core physics,
-                        applied physics, electronics and research.
-                    </div>
-
-                    <div class="course-info">
-
-                        <div class="course-info-item">
-                            <i class="far fa-clock"></i>
-                            3 Years
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-indian-rupee-sign"></i>
-                            ₹1,50,000/year
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-user-group"></i>
-                            40 Seats
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-book"></i>
-                            6 Semesters
-                        </div>
-
-                    </div>
-
-                    <div class="course-tags">
-
-                        <span class="course-tag">
-                            Science
-                        </span>
-
-                        <span class="course-tag">
-                            Full-Time
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="course-card-footer">
-
-                    <span class="course-students">
-                        <i class="fas fa-users"></i>
-                        32 Students
-                    </span>
-
-                    <span class="course-status">
-                        <i class="fas fa-circle"></i>
-                        Active
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- ================= COURSE 5 ================= -->
-
-            <div class="course-card"
-                 data-course="M.Tech Artificial Intelligence">
-
-                <div class="course-card-header header-cyan">
-
-                    <span class="course-code">
-                        PG
-                    </span>
-
-                    <div class="course-card-icons">
-
-                        <button type="button"
-                                class="course-card-icon"
-                                title="Edit Course"
-                                onclick="editCourse(this);">
-
-                            <i class="fas fa-pen"></i>
-
-                        </button>
-
-                        <button type="button"
-                                class="course-card-icon course-delete-icon"
-                                title="Delete Course"
-                                onclick="deleteCourse(this);">
-
-                            <i class="fas fa-trash"></i>
-
-                        </button>
-
-                    </div>
-
-                    <i class="fas fa-robot course-main-icon"></i>
-
-                </div>
-
-
-                <div class="course-card-body">
-
-                    <h3 class="course-name">
-                        M.Tech Artificial Intelligence
-                    </h3>
-
-                    <div class="course-short-code">
-                        MTECH-AI-001
-                    </div>
-
-                    <div class="course-description">
-                        Master of Technology in AI/ML. Deep learning,
-                        NLP, computer vision and reinforcement learning.
-                    </div>
-
-                    <div class="course-info">
-
-                        <div class="course-info-item">
-                            <i class="far fa-clock"></i>
-                            2 Years
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-indian-rupee-sign"></i>
-                            ₹2,40,000/year
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-user-group"></i>
-                            30 Seats
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-book"></i>
-                            4 Semesters
-                        </div>
-
-                    </div>
-
-                    <div class="course-tags">
-
-                        <span class="course-tag">
-                            Engineering
-                        </span>
-
-                        <span class="course-tag">
-                            PG
-                        </span>
-
-                        <span class="course-tag green">
-                            Active
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="course-card-footer">
-
-                    <span class="course-students">
-                        <i class="fas fa-users"></i>
-                        24 Students
-                    </span>
-
-                    <span class="course-status">
-                        <i class="fas fa-circle"></i>
-                        Active
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- ================= COURSE 6 ================= -->
-
-            <div class="course-card"
-                 data-course="BA English Literature">
-
-                <div class="course-card-header header-orange">
-
-                    <span class="course-code">
-                        UG
-                    </span>
-
-                    <div class="course-card-icons">
-
-                        <button type="button"
-                                class="course-card-icon"
-                                title="Edit Course"
-                                onclick="editCourse(this);">
-
-                            <i class="fas fa-pen"></i>
-
-                        </button>
-
-                        <button type="button"
-                                class="course-card-icon course-delete-icon"
-                                title="Delete Course"
-                                onclick="deleteCourse(this);">
-
-                            <i class="fas fa-trash"></i>
-
-                        </button>
-
-                    </div>
-
-                    <i class="fas fa-palette course-main-icon"></i>
-
-                </div>
-
-
-                <div class="course-card-body">
-
-                    <h3 class="course-name">
-                        BA English Literature
-                    </h3>
-
-                    <div class="course-short-code">
-                        BA-ENG-001
-                    </div>
-
-                    <div class="course-description">
-                        Bachelor of Arts in English. British and American
-                        literature, creative writing and literary studies.
-                    </div>
-
-                    <div class="course-info">
-
-                        <div class="course-info-item">
-                            <i class="far fa-clock"></i>
-                            3 Years
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-indian-rupee-sign"></i>
-                            ₹1,20,000/year
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-user-group"></i>
-                            60 Seats
-                        </div>
-
-                        <div class="course-info-item">
-                            <i class="fas fa-book"></i>
-                            6 Semesters
-                        </div>
-
-                    </div>
-
-                    <div class="course-tags">
-
-                        <span class="course-tag">
-                            Arts
-                        </span>
-
-                        <span class="course-tag">
-                            Full-Time
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="course-card-footer">
-
-                    <span class="course-students">
-                        <i class="fas fa-users"></i>
-                        45 Students
-                    </span>
-
-                    <span class="course-status upcoming">
-                        <i class="fas fa-circle"></i>
-                        Upcoming
-                    </span>
-
-                </div>
-
-            </div>
-
         </div>
+    </main>
 
-    </div>
+    <script>
+        // Sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.getElementById('mainContent').classList.toggle('sidebar-collapsed');
+        });
 
+        // View Toggles
+        const gridViewBtn = document.getElementById('gridViewBtn');
+        const tableViewBtn = document.getElementById('tableViewBtn');
+        const gridView = document.getElementById('gridView');
+        const tableView = document.getElementById('tableView');
 
-    <!-- ================= EDIT + DELETE JAVASCRIPT ================= -->
+        gridViewBtn.addEventListener('click', function () {
+            gridViewBtn.classList.add('active');
+            tableViewBtn.classList.remove('active');
+            gridView.classList.add('active');
+            tableView.classList.remove('active');
+        });
 
-    <script type="text/javascript">
+        tableViewBtn.addEventListener('click', function () {
+            tableViewBtn.classList.add('active');
+            gridViewBtn.classList.remove('active');
+            tableView.classList.add('active');
+            gridView.classList.remove('active');
+        });
 
-function editCourse(button) {
+        // Add / Edit Modal Functions
+        let isEditMode = false;
+        function openAddCourseModal() {
+            isEditMode = false;
+            document.getElementById('courseModalTitle').innerHTML = `<i class="fas fa-book-open text-primary me-2"></i>Add New Course`;
+            document.getElementById('courseForm').reset();
+            document.getElementById('courseSubmitBtn').innerHTML = `<i class="fas fa-plus me-1"></i> Create Course`;
+            const modal = new bootstrap.Modal(document.getElementById('courseModal'));
+            modal.show();
+        }
 
-    var card = button.closest(".course-card");
+        function openEditCourseModal(id, code, name, dept, level, duration, fee, seats) {
+            isEditMode = true;
+            document.getElementById('courseModalTitle').innerHTML = `<i class="fas fa-edit text-primary me-2"></i>Edit Course - ${name}`;
+            document.getElementById('modalCourseCode').value = code;
+            document.getElementById('modalCourseName').value = name;
+            document.getElementById('modalCourseDept').value = dept;
+            document.getElementById('modalCourseLevel').value = level;
+            document.getElementById('modalCourseDuration').value = duration;
+            document.getElementById('modalCourseFee').value = fee;
+            document.getElementById('modalCourseSeats').value = seats;
+            document.getElementById('courseSubmitBtn').innerHTML = `<i class="fas fa-save me-1"></i> Update Course`;
+            const modal = new bootstrap.Modal(document.getElementById('courseModal'));
+            modal.show();
+        }
 
-    if (!card) {
-        return;
-    }
+        function saveCourse(e) {
+            e.preventDefault();
+            const name = document.getElementById('modalCourseName').value;
+            alert(isEditMode ? `Course "${name}" updated successfully!` : `New Course "${name}" added successfully!`);
+            bootstrap.Modal.getInstance(document.getElementById('courseModal')).hide();
+        }
 
-    var courseNameElement = card.querySelector(".course-name");
+        // Delete Modal Functions
+        let targetDeleteName = '';
+        function openDeleteModal(name) {
+            targetDeleteName = name;
+            document.getElementById('deleteCourseName').innerText = name;
+            const modal = new bootstrap.Modal(document.getElementById('deleteCourseModal'));
+            modal.show();
+        }
 
-    if (!courseNameElement) {
-        return;
-    }
+        function confirmCourseDelete() {
+            alert(`Course "${targetDeleteName}" has been deleted.`);
+            bootstrap.Modal.getInstance(document.getElementById('deleteCourseModal')).hide();
+        }
 
-    var oldName = courseNameElement.textContent.trim();
-
-    var newName = prompt(
-        "Enter new course name:",
-        oldName
-    );
-
-    if (newName === null) {
-        return;
-    }
-
-    newName = newName.trim();
-
-    if (newName === "") {
-        alert("Course name cannot be empty.");
-        return;
-    }
-
-    courseNameElement.textContent = newName;
-
-    card.setAttribute("data-course", newName);
-
-    alert("Course updated successfully.");
-}
-
-
-function deleteCourse(button) {
-
-    var card = button.closest(".course-card");
-
-    if (!card) {
-        return;
-    }
-
-    var courseNameElement = card.querySelector(".course-name");
-
-    var courseName = "this course";
-
-    if (courseNameElement) {
-        courseName = courseNameElement.textContent.trim();
-    }
-
-    var confirmDelete = confirm(
-        "Are you sure you want to delete \"" +
-        courseName +
-        "\"?"
-    );
-
-    if (!confirmDelete) {
-        return;
-    }
-
-    card.classList.add("removing");
-
-    setTimeout(function () {
-
-        card.remove();
-
-    }, 250);
-}
-
-</script>
-
+        // Activate/Deactivate Toggle
+        function toggleCourseStatus(id, name, checkbox) {
+            const statusBadge = document.getElementById(`cardStatus-${id}`);
+            if (checkbox.checked) {
+                if (statusBadge) statusBadge.className = 'course-status active';
+                if (statusBadge) statusBadge.innerHTML = `<i class="fas fa-circle" style="font-size:6px"></i> Active`;
+                alert(`Course "${name}" activated!`);
+            } else {
+                if (statusBadge) statusBadge.className = 'course-status inactive';
+                if (statusBadge) statusBadge.innerHTML = `<i class="fas fa-circle" style="font-size:6px"></i> Inactive`;
+                alert(`Course "${name}" deactivated!`);
+            }
+        }
+    </script>
 </asp:Content>

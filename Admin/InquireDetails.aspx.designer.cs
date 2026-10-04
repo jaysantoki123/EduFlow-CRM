@@ -11,7 +11,7 @@ namespace EduFlow.Admin
 {
 
 
-    public partial class Applications
+    public partial class InquireDetails
     {
     }
 }

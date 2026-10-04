@@ -291,8 +291,8 @@
                     </div>
                     <div class="d-flex gap-2 align-items-center flex-wrap">
                         <div class="view-toggle">
-                            <button class="view-toggle-btn active" id="tableViewBtn"><i class="fas fa-list"></i> Table View</button>
-                            <button class="view-toggle-btn" id="gridViewBtn"><i class="fas fa-th-large"></i> Grid View</button>
+                            <button type="button" class="view-toggle-btn active" id="tableViewBtn"><i class="fas fa-list"></i> Table View</button>
+                            <button type="button" class="view-toggle-btn" id="gridViewBtn"><i class="fas fa-th-large"></i> Grid View</button>
                         </div>
                         <button class="btn btn-outline-secondary" onclick="alert('Exporting student directory CSV...');">
                             <i class="fas fa-download me-1"></i> Export Students
@@ -490,4 +490,24 @@
 
             </div>
         </main>
+        <script>
+            const tableViewBtn = document.getElementById('tableViewBtn');
+            const gridViewBtn = document.getElementById('gridViewBtn');
+            const tableView = document.getElementById('tableView');
+            const gridView = document.getElementById('gridView');
+
+            tableViewBtn.addEventListener('click', function () {
+                tableViewBtn.classList.add('active');
+                gridViewBtn.classList.remove('active');
+                tableView.classList.add('active');
+                gridView.classList.remove('active');
+            });
+
+            gridViewBtn.addEventListener('click', function () {
+                gridViewBtn.classList.add('active');
+                tableViewBtn.classList.remove('active');
+                gridView.classList.add('active');
+                tableView.classList.remove('active');
+            });
+        </script>
 </asp:Content>

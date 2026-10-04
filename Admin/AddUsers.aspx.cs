@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace EduFlow.Admin
 {
-    public partial class Students : System.Web.UI.Page
+    public partial class AddUsers : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {

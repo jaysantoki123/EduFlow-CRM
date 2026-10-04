@@ -282,7 +282,7 @@
 
                             <li class="nav-item">
 
-                                <a href="#"
+                                <a href="<%= ResolveUrl("~/Authentication/Login.aspx") %>"
                                     class="nav-link text-danger"
                                     id="sidebarLogout">
 

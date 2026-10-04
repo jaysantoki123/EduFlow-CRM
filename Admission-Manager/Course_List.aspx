@@ -15,7 +15,7 @@
         .filter-select:focus, .filter-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.1); }
 
         /* Course Grid */
-        .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: var(--spacing-lg); }
+        .course-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: var(--spacing-lg); }
         .course-card { background: rgba(255,255,255,.8); backdrop-filter: blur(12px); border-radius: var(--radius-xl); border: 1px solid var(--border-subtle); overflow: hidden; transition: all .3s; }
         .course-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 
@@ -72,8 +72,8 @@
                     </div>
                     <div class="d-flex gap-2 align-items-center flex-wrap">
                         <div class="view-toggle">
-                            <button class="view-toggle-btn active" id="gridViewBtn"><i class="fas fa-th-large"></i> Grid View</button>
-                            <button class="view-toggle-btn" id="tableViewBtn"><i class="fas fa-list"></i> Table View</button>
+                            <button type="button" class="view-toggle-btn active" id="gridViewBtn"><i class="fas fa-th-large"></i> Grid View</button>
+                            <button type="button" class="view-toggle-btn" id="tableViewBtn"><i class="fas fa-list"></i> Table View</button>
                         </div>
                         <button class="btn btn-primary" onclick="openAddCourseModal()">
                             <i class="fas fa-plus me-1"></i> Add Course
@@ -266,4 +266,24 @@
                 </div>
             </div>
         </main>
+        <script>
+            const gridViewBtn = document.getElementById('gridViewBtn');
+            const tableViewBtn = document.getElementById('tableViewBtn');
+            const gridView = document.getElementById('gridView');
+            const tableView = document.getElementById('tableView');
+
+            gridViewBtn.addEventListener('click', function () {
+                gridViewBtn.classList.add('active');
+                tableViewBtn.classList.remove('active');
+                gridView.classList.add('active');
+                tableView.classList.remove('active');
+            });
+
+            tableViewBtn.addEventListener('click', function () {
+                tableViewBtn.classList.add('active');
+                gridViewBtn.classList.remove('active');
+                tableView.classList.add('active');
+                gridView.classList.remove('active');
+            });
+        </script>
 </asp:Content>

@@ -329,8 +329,8 @@
                 </div>
                 <div class="d-flex gap-2 align-items-center flex-wrap">
                     <div class="view-toggle">
-                        <button class="view-toggle-btn active" id="pipelineViewBtn"><i class="fas fa-columns"></i>Pipeline</button>
-                        <button class="view-toggle-btn" id="tableViewBtn"><i class="fas fa-list"></i>Table View</button>
+                        <button type="button" class="view-toggle-btn active" id="pipelineViewBtn"><i class="fas fa-columns"></i>Pipeline</button>
+                        <button type="button" class="view-toggle-btn" id="tableViewBtn"><i class="fas fa-list"></i>Table View</button>
                     </div>
                     <button class="btn btn-outline-secondary" onclick="alert('Exporting Admission Applications CSV...');">
                         <i class="fas fa-download me-1"></i>Export Data

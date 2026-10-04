@@ -95,8 +95,7 @@
   <ItemGroup>
     <Content Include="About.aspx" />
     <Content Include="Admin\AddCourse.aspx" />
-    <Content Include="Admin\AddRole.aspx" />
-    <Content Include="Admin\AddUser.aspx" />
+    <Content Include="Admin\AddUsers.aspx" />
     <Content Include="Admin\ApplicationDetails.aspx" />
     <Content Include="Admin\Applications.aspx" />
     <Content Include="Admin\ChangePassword.aspx" />
@@ -107,9 +106,8 @@
     <Content Include="Admin\Dashboard.aspx" />
     <Content Include="Admin\EditProfile.aspx" />
     <Content Include="Admin\FollowUps.aspx" />
+    <Content Include="Admin\InquireDetails.aspx" />
     <Content Include="Admin\Inquiries.aspx" />
-    <Content Include="Admin\InquiryDetails.aspx" />
-    <Content Include="Admin\NewApplication.aspx" />
     <Content Include="Admin\Profile.aspx" />
     <Content Include="Admin\Reports.aspx" />
     <Content Include="Admin\RolesPermissions.aspx" />
@@ -227,19 +225,12 @@
     <Compile Include="Admin\AddCourse.aspx.designer.cs">
       <DependentUpon>AddCourse.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Admin\AddRole.aspx.cs">
-      <DependentUpon>AddRole.aspx</DependentUpon>
+    <Compile Include="Admin\AddUsers.aspx.cs">
+      <DependentUpon>AddUsers.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Admin\AddRole.aspx.designer.cs">
-      <DependentUpon>AddRole.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\AddUser.aspx.cs">
-      <DependentUpon>AddUser.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\AddUser.aspx.designer.cs">
-      <DependentUpon>AddUser.aspx</DependentUpon>
+    <Compile Include="Admin\AddUsers.aspx.designer.cs">
+      <DependentUpon>AddUsers.aspx</DependentUpon>
     </Compile>
     <Compile Include="Admin\ApplicationDetails.aspx.cs">
       <DependentUpon>ApplicationDetails.aspx</DependentUpon>
@@ -311,26 +302,19 @@
     <Compile Include="Admin\FollowUps.aspx.designer.cs">
       <DependentUpon>FollowUps.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\InquireDetails.aspx.cs">
+      <DependentUpon>InquireDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\InquireDetails.aspx.designer.cs">
+      <DependentUpon>InquireDetails.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Admin\Inquiries.aspx.cs">
       <DependentUpon>Inquiries.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Admin\Inquiries.aspx.designer.cs">
       <DependentUpon>Inquiries.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\InquiryDetails.aspx.cs">
-      <DependentUpon>InquiryDetails.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\InquiryDetails.aspx.designer.cs">
-      <DependentUpon>InquiryDetails.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Admin\NewApplication.aspx.cs">
-      <DependentUpon>NewApplication.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\NewApplication.aspx.designer.cs">
-      <DependentUpon>NewApplication.aspx</DependentUpon>
     </Compile>
     <Compile Include="Admin\Profile.aspx.cs">
       <DependentUpon>Profile.aspx</DependentUpon>

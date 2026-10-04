@@ -289,9 +289,9 @@
                     </div>
                     <div class="d-flex gap-2 align-items-center flex-wrap">
                         <div class="view-toggle">
-                            <button class="view-toggle-btn active" id="cardViewBtn"><i class="fas fa-th-large"></i> Cards</button>
-                            <button class="view-toggle-btn" id="tableViewBtn"><i class="fas fa-list"></i> Table</button>
-                            <button class="view-toggle-btn" id="perfViewBtn"><i class="fas fa-chart-bar"></i> Performance</button>
+                            <button type="button" class="view-toggle-btn active" id="cardViewBtn"><i class="fas fa-th-large"></i> Cards</button>
+                            <button type="button" class="view-toggle-btn" id="tableViewBtn"><i class="fas fa-list"></i> Table</button>
+                            <button type="button" class="view-toggle-btn" id="perfViewBtn"><i class="fas fa-chart-bar"></i> Performance</button>
                         </div>
                         <a href="counselor-calendar.html" class="btn btn-outline-primary">
                             <i class="far fa-calendar-alt me-1"></i> Counseling Calendar

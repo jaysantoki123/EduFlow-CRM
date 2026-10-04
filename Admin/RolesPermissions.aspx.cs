@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace EduCRM
+namespace EduFlow.Admin
 {
     public partial class RolesPermissions : System.Web.UI.Page
     {

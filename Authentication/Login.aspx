@@ -432,18 +432,16 @@
             </div>
 
             <div class="d-flex flex-column gap-2">
-                <button type="button" class="btn text-white" style="background: linear-gradient(135deg, #4f46e5 0%, #3525cd 100%); font-weight: 600; border: none;" onclick="quickLogin('admin')">
+                <a href="<%= ResolveUrl("~/Admin/Dashboard.aspx") %>" type="button" class="btn text-white" style="background: linear-gradient(135deg, #4f46e5 0%, #3525cd 100%); font-weight: 600; border: none;" onclick="quickLogin('admin')">
                     <i class="fas fa-user-shield me-2"></i>Log in as Admin
-                </button>
-                <button type="button" class="btn text-white" style="background: linear-gradient(135deg, #0051d5 0%, #0041a8 100%); font-weight: 600; border: none;" onclick="quickLogin('manager')">
+                </a>
+                <a href="<%= ResolveUrl("~/Admission-Manager/Dashboard.aspx") %>" type="button" class="btn text-white" style="background: linear-gradient(135deg, #0051d5 0%, #0041a8 100%); font-weight: 600; border: none;" onclick="quickLogin('manager')">
                     <i class="fas fa-user-tie me-2"></i>Log in as Admission Manager
-                </button>
+                </a>
                 <button type="button" class="btn text-white" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); font-weight: 600; border: none;" onclick="quickLogin('counselor')">
                     <i class="fas fa-user me-2"></i>Log in as Counselor
                 </button>
-                <button type="button" class="btn text-white" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); font-weight: 600; border: none;" onclick="quickLogin('student')">
-                    <i class="fas fa-graduation-cap me-2"></i>Log in as Student Portal
-                </button>
+                
             </div>
 
             <div class="auth-footer">

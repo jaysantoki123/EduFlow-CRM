@@ -7,8 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EduCRM
+namespace EduFlow.Admin
 {
+
+
     public partial class CounselingDetails
     {
     }

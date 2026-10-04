@@ -1,1268 +1,532 @@
-﻿<%@ Page Title="Inquiries"
-    Language="C#"
-    MasterPageFile="~/Admin/Site1.Master"
-    AutoEventWireup="true"
-    CodeBehind="Inquiries.aspx.cs"
-    Inherits="EduCRM.Inquiries" %>
-
-
-<asp:Content ID="HeadContent"
-    ContentPlaceHolderID="head"
-    runat="server">
-
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Admin/Site1.Master" AutoEventWireup="true" CodeBehind="Inquiries.aspx.cs" Inherits="EduFlow.Admin.Inquiries" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+    Inquiries - EduFlow CRM
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
-
-        /* =========================================
-           INQUIRY PAGE
-        ========================================= */
-
-        .inquiry-page {
-            width: 100%;
-        }
-
-
-        /* =========================================
-           PAGE HEADER
-        ========================================= */
-
-        .inquiry-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 28px;
-        }
-
-        .inquiry-title h1 {
-            margin: 0 0 8px 0;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 32px;
-            font-weight: 600;
-            color: #111c2d;
-        }
-
-        .inquiry-title p {
-            margin: 0;
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .monitoring-badge {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            background: #e8f1ff;
-            color: #2563eb;
-            border: 1px solid #bfdbfe;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-
-        /* =========================================
-           STAT CARDS
-        ========================================= */
-
-        .inquiry-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 18px;
-        }
-
-        .inquiry-stat-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 18px;
-            min-height: 100px;
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-
-            /* HOVER EFFECT */
-            transition: transform 0.2s ease,
-                        box-shadow 0.2s ease,
-                        border-color 0.2s ease;
-        }
-
-        .inquiry-stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.10);
-            border-color: #c7d2fe;
-        }
-
-        .inquiry-stat-icon {
-            width: 42px;
-            height: 42px;
-            min-width: 42px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .stat-purple {
-            background: #ede9fe;
-            color: #6d4aff;
-        }
-
-        .stat-blue {
-            background: #e0edff;
-            color: #2563eb;
-        }
-
-        .stat-orange {
-            background: #fff0d5;
-            color: #f59e0b;
-        }
-
-        .stat-green {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .inquiry-stat-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: .6px;
-            color: #64748b;
-            margin-bottom: 5px;
-        }
-
-        .inquiry-stat-number {
-            font-size: 24px;
-            font-weight: 500;
-            color: #172033;
-            line-height: 1.1;
-            margin-bottom: 5px;
-        }
-
-        .inquiry-stat-change {
-            font-size: 10px;
-            color: #16a34a;
-        }
-
-        .inquiry-stat-change.red {
-            color: #ef4444;
-        }
-
-
-        /* =========================================
-           FILTER CARD
-        ========================================= */
-
-        .filter-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 8px;
-        }
-
-        .filter-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-        }
-
-        .filter-title {
-            font-size: 14px;
-            color: #64748b;
-            margin: 0;
-        }
-
-        .reset-btn {
-            border: 1px solid #e2e8f0;
-            background: #ffffff;
-            color: #6d4aff;
-            border-radius: 6px;
-            padding: 7px 12px;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .reset-btn:hover {
-            background: #f5f3ff;
-            border-color: #c4b5fd;
-        }
-
-        .reset-btn i {
-            margin-right: 5px;
+        .filter-section {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
         }
 
         .filter-row {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
         }
 
-        .filter-group label {
-            display: block;
-            font-size: 9px;
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--on-surface-variant);
             text-transform: uppercase;
-            letter-spacing: .5px;
-            color: #64748b;
-            margin-bottom: 6px;
+            letter-spacing: 0.05em;
         }
 
-        .filter-control {
-            width: 100%;
-            height: 38px;
-            border: 1px solid #dbe3ed;
-            border-radius: 6px;
-            padding: 0 10px;
-            background: #ffffff;
-            color: #334155;
-            font-size: 11px;
+        .filter-select,
+        .filter-input {
+            height: 40px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 0 12px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus,
+        .filter-input:focus {
             outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
-
-
-        /* =========================================
-           INQUIRY TABLE CARD
-        ========================================= */
 
         .inquiry-table-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
             overflow: hidden;
-
-            transition: transform 0.2s ease,
-                        box-shadow 0.2s ease,
-                        border-color 0.2s ease;
         }
 
-        .inquiry-table-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
-        }
-
-        .table-search-area {
-            height: 60px;
+        .table-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
-            padding: 10px 16px;
-            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
         }
 
-        .table-search {
-            width: 250px;
-            height: 34px;
-            border: 1px solid #e2e8f0;
-            border-radius: 18px;
+        .table-actions {
             display: flex;
+            gap: var(--spacing-sm);
             align-items: center;
-            padding: 0 12px;
-            color: #64748b;
         }
 
-        .table-search i {
-            margin-right: 8px;
-            font-size: 12px;
+        .search-box {
+            position: relative;
+            width: 300px;
         }
 
-        .table-search input {
-            border: none;
-            outline: none;
+        .search-box input {
             width: 100%;
-            font-size: 11px;
+            height: 40px;
+            padding: 0 16px 0 40px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            background: white;
         }
 
-        .inquiry-table-wrapper {
-            width: 100%;
-            overflow-x: auto;
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--on-surface-variant);
         }
 
         .inquiry-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 900px;
+        }
+
+        .inquiry-table thead {
+            background: var(--surface-container-low);
         }
 
         .inquiry-table th {
-            background: #f8faff;
-            color: #64748b;
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: .4px;
-            font-weight: 500;
-            padding: 12px 10px;
+            padding: 16px;
             text-align: left;
-            border-bottom: 1px solid #e2e8f0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--on-surface-variant);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-subtle);
             white-space: nowrap;
         }
 
         .inquiry-table td {
-            padding: 12px 10px;
-            font-size: 10px;
-            color: #334155;
-            border-bottom: 1px solid #edf2f7;
-            vertical-align: middle;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 14px;
+            color: var(--on-surface);
         }
 
-        .inquiry-table tr:last-child td {
-            border-bottom: none;
+        .inquiry-table tbody tr {
+            transition: all 0.2s ease;
         }
 
+        .inquiry-table tbody tr:hover {
+            background: var(--surface-container-low);
+        }
 
-        /* =========================================
-           STUDENT
-        ========================================= */
+        .inquiry-id {
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .inquiry-id:hover {
+            text-decoration: underline;
+        }
 
         .student-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
-        .student-avatar-small {
-            width: 28px;
-            height: 28px;
-            min-width: 28px;
-            border-radius: 50%;
-            background: #304fe8;
-            color: #ffffff;
+        .student-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
+            color: white;
             font-weight: 600;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .student-details {
+            display: flex;
+            flex-direction: column;
         }
 
         .student-name {
-            font-size: 10px;
-            font-weight: 500;
-            color: #334155;
+            font-weight: 600;
+            color: var(--on-surface);
+            margin: 0;
         }
 
-        .student-phone {
-            font-size: 8px;
-            color: #64748b;
-            margin-top: 2px;
+        .student-contact {
+            font-size: 12px;
+            color: var(--on-surface-variant);
+            margin: 0;
         }
 
-
-        /* =========================================
-           STATUS BADGES
-        ========================================= */
-
-        .badge {
-            display: inline-block;
-            padding: 4px 9px;
-            border-radius: 20px;
-            font-size: 8px;
-            white-space: nowrap;
-        }
-
-        .badge-new {
-            background: #ede9fe;
-            color: #6d4aff;
-        }
-
-        .badge-contacted {
-            background: #e0edff;
-            color: #2563eb;
-        }
-
-        .badge-qualified {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .badge-converted {
-            background: #dff7f0;
-            color: #0f766e;
-        }
-
-
-        /* =========================================
-           PRIORITY
-        ========================================= */
-
-        .priority {
-            display: flex;
+        .status-badge {
+            display: inline-flex;
             align-items: center;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 500;
             gap: 6px;
         }
 
-        .priority-dot {
-            width: 5px;
-            height: 5px;
+        .status-badge i { font-size: 8px; }
+        .status-badge.new { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+        .status-badge.contacted { background: rgba(0, 81, 213, 0.1); color: var(--info); }
+        .status-badge.qualified { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+        .status-badge.converted { background: rgba(0, 109, 98, 0.1); color: var(--tertiary); }
+        .status-badge.lost { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        .priority-indicator {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
         }
 
-        .high-dot {
-            background: #ef4444;
-        }
+        .priority-indicator.high { background: var(--danger); }
+        .priority-indicator.medium { background: var(--warning); }
+        .priority-indicator.low { background: var(--success); }
 
-        .medium-dot {
-            background: #f59e0b;
-        }
-
-        .low-dot {
-            background: #22c55e;
-        }
-
-
-        /* =========================================
-           VIEW BUTTON
-        ========================================= */
-
-        .eye-button {
-            width: 28px;
-            height: 28px;
-            border: 1px solid #e2e8f0;
-            background: #ffffff;
-            border-radius: 6px;
-            color: #64748b;
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--border-subtle);
+            background: white;
+            color: var(--on-surface-variant);
             cursor: pointer;
-
-            transition: all 0.2s ease;
-        }
-
-        .eye-button:hover {
-            background: #5746e8;
-            border-color: #5746e8;
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(87, 70, 232, 0.25);
-        }
-
-
-        /* =========================================
-           TABLE FOOTER
-        ========================================= */
-
-        .table-footer {
-            display: flex;
-            justify-content: space-between;
+            border-radius: var(--radius-md);
+            display: inline-flex;
             align-items: center;
-            padding: 12px 16px;
-            border-top: 1px solid #e2e8f0;
+            justify-content: center;
+            transition: all 0.2s ease;
+            margin-right: 4px;
         }
 
-        .showing-text {
-            font-size: 10px;
-            color: #64748b;
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .action-btn.timeline-btn:hover {
+            background: var(--info);
+            color: white;
+            border-color: var(--info);
         }
 
         .pagination {
+            padding: var(--spacing-lg);
             display: flex;
-            gap: 5px;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-subtle);
         }
+
+        .pagination-info { font-size: 14px; color: var(--on-surface-variant); }
+        .pagination-controls { display: flex; gap: 8px; }
 
         .page-btn {
-            width: 26px;
-            height: 26px;
-            border: 1px solid #e2e8f0;
-            background: #ffffff;
-            border-radius: 5px;
-            font-size: 10px;
-            color: #475569;
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border-subtle);
+            background: white;
+            color: var(--on-surface);
+            border-radius: var(--radius-md);
             cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
-        .page-btn:hover {
-            background: #f5f3ff;
-            border-color: #c4b5fd;
-        }
+        .page-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        .page-btn.active {
-            background: #5746e8;
-            color: #ffffff;
-            border-color: #5746e8;
-        }
-
-
-        /* =========================================
-           RESPONSIVE
-        ========================================= */
-
-        @media (max-width: 1000px) {
-
-            .inquiry-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .filter-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-        }
-
-        @media (max-width: 650px) {
-
-            .inquiry-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .filter-row {
-                grid-template-columns: 1fr;
-            }
-
-            .inquiry-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-        }
-
+        .checkbox-cell { width: 40px; padding: 16px 16px 16px 24px; }
+        .custom-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
     </style>
-
 </asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
+    <main class="main-content" id="mainContent">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                    <div class="topbar-search"><i class="fas fa-search"></i><input type="text" placeholder="Search inquiries..."></div>
+                </div>
+                <div class="topbar-right">
+                    <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge"></span></button>
+                    <button class="topbar-icon-btn"><i class="fas fa-user-circle"></i></button>
+                </div>
+            </header>
 
-
-<asp:Content ID="MainContent"
-    ContentPlaceHolderID="ContentPlaceHolder1"
-    runat="server">
-
-
-    <div class="inquiry-page">
-
-
-        <!-- =====================================
-             PAGE HEADER
-        ====================================== -->
-
-        <div class="inquiry-header">
-
-            <div class="inquiry-title">
-
-                <h1>
-                    Inquiry Monitoring &amp; Analytics
-                </h1>
-
-                <p>
-                    System Admin Inquiry Oversight — Read-Only Monitoring &amp; Activity Metrics
-                </p>
-
-            </div>
-
-            <div class="monitoring-badge">
-
-                <i class="fa-solid fa-shield-halved"></i>
-
-                Admin Monitoring Mode (Read-Only)
-
-            </div>
-
-        </div>
-
-
-        <!-- =====================================
-             STATISTICS
-        ====================================== -->
-
-        <div class="inquiry-stats">
-
-
-            <!-- TOTAL INQUIRIES -->
-
-            <div class="inquiry-stat-card">
-
-                <div class="inquiry-stat-icon stat-purple">
-
-                    <i class="fa-solid fa-inbox"></i>
-
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <div>
+                        <h1 class="headline-lg mb-1">Inquiry Monitoring & Analytics</h1>
+                        <p class="text-muted mb-0">System Admin Inquiry Oversight — Read-Only Monitoring & Activity Metrics</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold" style="font-size:13px">
+                            <i class="fas fa-shield-alt me-1"></i> Admin Monitoring Mode (Read-Only)
+                        </span>
+                        <button class="btn btn-outline-secondary" onclick="alert('Exporting full inquiry log CSV...');">
+                            <i class="fas fa-download me-1"></i> Export Data
+                        </button>
+                    </div>
                 </div>
 
-                <div>
+                <!-- Inquiry Statistics Overview (5 Cards) -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-icon primary"><i class="fas fa-inbox"></i></div>
+                            <div class="stats-content">
+                                <div class="stats-label">Total Inquiries</div>
+                                <div class="stats-value">284</div>
+                                <div class="stats-change positive"><i class="fas fa-arrow-up"></i> <span>+12% this month</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-icon info"><i class="fas fa-star"></i></div>
+                            <div class="stats-content">
+                                <div class="stats-label">New Today</div>
+                                <div class="stats-value">42</div>
+                                <div class="stats-change positive"><i class="fas fa-clock"></i> <span>8 added last 2 hrs</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-icon warning"><i class="fas fa-hourglass-half"></i></div>
+                            <div class="stats-content">
+                                <div class="stats-label">Counseling Pending</div>
+                                <div class="stats-value">58</div>
+                                <div class="stats-change negative"><i class="fas fa-user-clock"></i> <span>Requires assignment</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-icon success"><i class="fas fa-check-circle"></i></div>
+                            <div class="stats-content">
+                                <div class="stats-label">Converted Admissions</div>
+                                <div class="stats-value">156</div>
+                                <div class="stats-change positive"><i class="fas fa-chart-line"></i> <span>55% Conversion Rate</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="inquiry-stat-label">
-                        Total Inquiries
+                <!-- Filters Section -->
+                <div class="filter-section">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="headline-sm mb-0">Search & Filter Inquiries</h3>
+                        <button class="btn btn-sm btn-secondary" id="resetFilters"><i class="fas fa-redo"></i> Reset Filters</button>
+                    </div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">Status</label>
+                            <select class="filter-select" id="filterStatus">
+                                <option value="">All Status</option>
+                                <option value="new">New</option>
+                                <option value="contacted">Contacted</option>
+                                <option value="qualified">Qualified</option>
+                                <option value="converted">Converted</option>
+                                <option value="lost">Lost</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Course Interest</label>
+                            <select class="filter-select" id="filterCourse">
+                                <option value="">All Courses</option>
+                                <option value="btech">B.Tech CSE</option>
+                                <option value="mba">MBA Finance</option>
+                                <option value="bca">BCA</option>
+                                <option value="bsc">B.Sc Data Science</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Source</label>
+                            <select class="filter-select" id="filterSource">
+                                <option value="">All Sources</option>
+                                <option value="website">Website</option>
+                                <option value="referral">Referral</option>
+                                <option value="social">Social Media</option>
+                                <option value="walkin">Walk-in</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Date Range</label>
+                            <input type="date" class="filter-input" id="filterDate">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inquiry Table Card (Initial Table View) -->
+                <div class="inquiry-table-card">
+                    <div class="table-header">
+                        <div class="table-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="alert('Exporting inquiry CSV...');"><i class="fas fa-download"></i> Export</button>
+                            <button class="btn btn-sm btn-secondary" onclick="window.print();"><i class="fas fa-print"></i> Print</button>
+                        </div>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search by name, email, phone..." id="tableSearch">
+                        </div>
                     </div>
 
-                    <div class="inquiry-stat-number">
-                        284
-                    </div>
-
-                    <div class="inquiry-stat-change">
-                        ↑ 12% this month
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- NEW TODAY -->
-
-            <div class="inquiry-stat-card">
-
-                <div class="inquiry-stat-icon stat-blue">
-
-                    <i class="fa-solid fa-star"></i>
-
-                </div>
-
-                <div>
-
-                    <div class="inquiry-stat-label">
-                        New Today
-                    </div>
-
-                    <div class="inquiry-stat-number">
-                        42
-                    </div>
-
-                    <div class="inquiry-stat-change">
-                        ● 8 added last 2 hrs
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- COUNSELING PENDING -->
-
-            <div class="inquiry-stat-card">
-
-                <div class="inquiry-stat-icon stat-orange">
-
-                    <i class="fa-solid fa-hourglass-half"></i>
-
-                </div>
-
-                <div>
-
-                    <div class="inquiry-stat-label">
-                        Counseling Pending
-                    </div>
-
-                    <div class="inquiry-stat-number">
-                        58
-                    </div>
-
-                    <div class="inquiry-stat-change red">
-                        <i class="fa-solid fa-user"></i>
-                        Requires assignment
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- CONVERTED -->
-
-            <div class="inquiry-stat-card">
-
-                <div class="inquiry-stat-icon stat-green">
-
-                    <i class="fa-solid fa-circle-check"></i>
-
-                </div>
-
-                <div>
-
-                    <div class="inquiry-stat-label">
-                        Converted Admissions
-                    </div>
-
-                    <div class="inquiry-stat-number">
-                        156
-                    </div>
-
-                    <div class="inquiry-stat-change">
-                        ↗ 55% Conversion Rate
-                    </div>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- =====================================
-             SEARCH & FILTER
-        ====================================== -->
-
-        <div class="filter-card">
-
-            <div class="filter-header">
-
-                <h3 class="filter-title">
-                    Search &amp; Filter Inquiries
-                </h3>
-
-                <button type="button"
-                        class="reset-btn">
-
-                    <i class="fa-solid fa-rotate-right"></i>
-
-                    Reset Filters
-
-                </button>
-
-            </div>
-
-
-            <div class="filter-row">
-
-
-                <!-- STATUS -->
-
-                <div class="filter-group">
-
-                    <label>
-                        Status
-                    </label>
-
-                    <select class="filter-control">
-
-                        <option>All Status</option>
-                        <option>New</option>
-                        <option>Contacted</option>
-                        <option>Qualified</option>
-                        <option>Converted</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- COURSE -->
-
-                <div class="filter-group">
-
-                    <label>
-                        Course Interest
-                    </label>
-
-                    <select class="filter-control">
-
-                        <option>All Courses</option>
-                        <option>B.Tech CSE</option>
-                        <option>MBA Finance</option>
-                        <option>BCA</option>
-                        <option>B.Sc Data Science</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- SOURCE -->
-
-                <div class="filter-group">
-
-                    <label>
-                        Source
-                    </label>
-
-                    <select class="filter-control">
-
-                        <option>All Sources</option>
-                        <option>Website</option>
-                        <option>Referral</option>
-                        <option>Social Media</option>
-                        <option>Walk-in</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- DATE -->
-
-                <div class="filter-group">
-
-                    <label>
-                        Date Range
-                    </label>
-
-                    <input type="date"
-                           class="filter-control" />
-
-                </div>
-
-
-            </div>
-
-        </div>
-
-
-        <!-- =====================================
-             INQUIRY TABLE
-        ====================================== -->
-
-        <div class="inquiry-table-card">
-
-
-            <!-- SEARCH -->
-
-            <div class="table-search-area">
-
-                <div class="table-search">
-
-                    <i class="fa-solid fa-magnifying-glass"></i>
-
-                    <input type="text"
-                           placeholder="Search by name, email, phone..." />
-
-                </div>
-
-            </div>
-
-
-            <div class="inquiry-table-wrapper">
-
-                <table class="inquiry-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Inquiry ID
-                            </th>
-
-                            <th>
-                                Student Details
-                            </th>
-
-                            <th>
-                                Course Interest
-                            </th>
-
-                            <th>
-                                Source
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th>
-                                Priority
-                            </th>
-
-                            <th>
-                                Assigned Counselor
-                            </th>
-
-                            <th>
-                                Inquiry Date
-                            </th>
-
-                            <th>
-                                Action
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-
-                        <!-- =====================================
-                             RAJESH
-                        ====================================== -->
-
-                        <tr>
-
-                            <td>
-                                #INQ-2024-001
-                            </td>
-
-                            <td>
-
-                                <div class="student-info">
-
-                                    <div class="student-avatar-small">
-                                        RK
-                                    </div>
-
-                                    <div>
-
-                                        <div class="student-name">
-                                            Rajesh Kumar
+                    <div style="overflow-x: auto;">
+                        <table class="inquiry-table">
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-cell"><input type="checkbox" class="custom-checkbox" id="selectAllHeader"></th>
+                                    <th>Inquiry ID</th>
+                                    <th>Student Details</th>
+                                    <th>Course Interest</th>
+                                    <th>Source</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Assigned Counselor</th>
+                                    <th>Inquiry Date</th>
+                                    <th>Actions (Monitoring)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inquiryTableBody">
+                                <tr>
+                                    <td class="checkbox-cell"><input type="checkbox" class="custom-checkbox row-checkbox"></td>
+                                    <td><span class="inquiry-id" onclick="window.location.href='inquiry-details.html'">#INQ-2024-001</span></td>
+                                    <td>
+                                        <div class="student-info">
+                                            <div class="student-avatar">RK</div>
+                                            <div class="student-details">
+                                                <p class="student-name">Rajesh Kumar</p>
+                                                <p class="student-contact">+91 98765 43210</p>
+                                            </div>
                                         </div>
-
-                                        <div class="student-phone">
-                                            +91 98765 43210
+                                    </td>
+                                    <td>B.Tech CSE</td>
+                                    <td>Website</td>
+                                    <td><span class="status-badge new"><i class="fas fa-circle"></i> New</span></td>
+                                    <td><span class="priority-indicator high"></span> High</td>
+                                    <td>Sarah Patel</td>
+                                    <td>Dec 15, 2024</td>
+                                    <td>
+                                        <button class="action-btn" title="View Details" onclick="window.location.href='inquiry-details.html'"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn timeline-btn" title="View Timeline" onclick="window.location.href='inquiry-timeline.html'"><i class="fas fa-history"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="checkbox-cell"><input type="checkbox" class="custom-checkbox row-checkbox"></td>
+                                    <td><span class="inquiry-id" onclick="window.location.href='inquiry-details.html'">#INQ-2024-002</span></td>
+                                    <td>
+                                        <div class="student-info">
+                                            <div class="student-avatar">PS</div>
+                                            <div class="student-details">
+                                                <p class="student-name">Priya Sharma</p>
+                                                <p class="student-contact">+91 98765 43211</p>
+                                            </div>
                                         </div>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                B.Tech CSE
-                            </td>
-
-                            <td>
-                                Website
-                            </td>
-
-                            <td>
-
-                                <span class="badge badge-new">
-                                    ● New
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <div class="priority">
-
-                                    <span class="priority-dot high-dot"></span>
-
-                                    High
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Sarah Patel
-                            </td>
-
-                            <td>
-                                Dec 15, 2024
-                            </td>
-
-                            <td>
-
-                                <button type="button"
-                                        class="eye-button"
-                                        onclick="window.location.href='<%= ResolveUrl("~/Admin/InquiryDetails.aspx?id=INQ-2024-001") %>';"
-                                        title="View Inquiry">
-
-                                    <i class="fa-solid fa-eye"></i>
-
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-
-                        <!-- =====================================
-                             PRIYA
-                        ====================================== -->
-
-                        <tr>
-
-                            <td>
-                                #INQ-2024-002
-                            </td>
-
-                            <td>
-
-                                <div class="student-info">
-
-                                    <div class="student-avatar-small">
-                                        PS
-                                    </div>
-
-                                    <div>
-
-                                        <div class="student-name">
-                                            Priya Sharma
+                                    </td>
+                                    <td>MBA Finance</td>
+                                    <td>Referral</td>
+                                    <td><span class="status-badge contacted"><i class="fas fa-circle"></i> Contacted</span></td>
+                                    <td><span class="priority-indicator medium"></span> Medium</td>
+                                    <td>Rahul Gupta</td>
+                                    <td>Dec 14, 2024</td>
+                                    <td>
+                                        <button class="action-btn" title="View Details" onclick="window.location.href='inquiry-details.html'"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn timeline-btn" title="View Timeline" onclick="window.location.href='inquiry-timeline.html'"><i class="fas fa-history"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="checkbox-cell"><input type="checkbox" class="custom-checkbox row-checkbox"></td>
+                                    <td><span class="inquiry-id" onclick="window.location.href='inquiry-details.html'">#INQ-2024-003</span></td>
+                                    <td>
+                                        <div class="student-info">
+                                            <div class="student-avatar">AV</div>
+                                            <div class="student-details">
+                                                <p class="student-name">Amit Verma</p>
+                                                <p class="student-contact">+91 98765 43212</p>
+                                            </div>
                                         </div>
-
-                                        <div class="student-phone">
-                                            +91 98765 43211
+                                    </td>
+                                    <td>BCA</td>
+                                    <td>Social Media</td>
+                                    <td><span class="status-badge qualified"><i class="fas fa-circle"></i> Qualified</span></td>
+                                    <td><span class="priority-indicator high"></span> High</td>
+                                    <td>Meera Patil</td>
+                                    <td>Dec 14, 2024</td>
+                                    <td>
+                                        <button class="action-btn" title="View Details" onclick="window.location.href='inquiry-details.html'"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn timeline-btn" title="View Timeline" onclick="window.location.href='inquiry-timeline.html'"><i class="fas fa-history"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="checkbox-cell"><input type="checkbox" class="custom-checkbox row-checkbox"></td>
+                                    <td><span class="inquiry-id" onclick="window.location.href='inquiry-details.html'">#INQ-2024-004</span></td>
+                                    <td>
+                                        <div class="student-info">
+                                            <div class="student-avatar">SK</div>
+                                            <div class="student-details">
+                                                <p class="student-name">Sneha Kapoor</p>
+                                                <p class="student-contact">+91 98765 43213</p>
+                                            </div>
                                         </div>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                MBA Finance
-                            </td>
-
-                            <td>
-                                Referral
-                            </td>
-
-                            <td>
-
-                                <span class="badge badge-contacted">
-                                    ● Contacted
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <div class="priority">
-
-                                    <span class="priority-dot medium-dot"></span>
-
-                                    Medium
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Rahul Gupta
-                            </td>
-
-                            <td>
-                                Dec 14, 2024
-                            </td>
-
-                            <td>
-
-                                <button type="button"
-                                        class="eye-button"
-                                        onclick="window.location.href='<%= ResolveUrl("~/Admin/InquiryDetails.aspx?id=INQ-2024-002") %>';"
-                                        title="View Inquiry">
-
-                                    <i class="fa-solid fa-eye"></i>
-
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-
-                        <!-- =====================================
-                             AMIT
-                        ====================================== -->
-
-                        <tr>
-
-                            <td>
-                                #INQ-2024-003
-                            </td>
-
-                            <td>
-
-                                <div class="student-info">
-
-                                    <div class="student-avatar-small">
-                                        AV
-                                    </div>
-
-                                    <div>
-
-                                        <div class="student-name">
-                                            Amit Verma
-                                        </div>
-
-                                        <div class="student-phone">
-                                            +91 98765 43212
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                BCA
-                            </td>
-
-                            <td>
-                                Social Media
-                            </td>
-
-                            <td>
-
-                                <span class="badge badge-qualified">
-                                    ● Qualified
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <div class="priority">
-
-                                    <span class="priority-dot high-dot"></span>
-
-                                    High
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Meera Patel
-                            </td>
-
-                            <td>
-                                Dec 14, 2024
-                            </td>
-
-                            <td>
-
-                                <button type="button"
-                                        class="eye-button"
-                                        onclick="window.location.href='<%= ResolveUrl("~/Admin/InquiryDetails.aspx?id=INQ-2024-003") %>';"
-                                        title="View Inquiry">
-
-                                    <i class="fa-solid fa-eye"></i>
-
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-
-                        <!-- =====================================
-                             SNEHA
-                        ====================================== -->
-
-                        <tr>
-
-                            <td>
-                                #INQ-2024-004
-                            </td>
-
-                            <td>
-
-                                <div class="student-info">
-
-                                    <div class="student-avatar-small">
-                                        SK
-                                    </div>
-
-                                    <div>
-
-                                        <div class="student-name">
-                                            Sneha Kapoor
-                                        </div>
-
-                                        <div class="student-phone">
-                                            +91 98765 43213
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                B.Sc Data Science
-                            </td>
-
-                            <td>
-                                Walk-in
-                            </td>
-
-                            <td>
-
-                                <span class="badge badge-converted">
-                                    ● Converted
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <div class="priority">
-
-                                    <span class="priority-dot low-dot"></span>
-
-                                    Low
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                Sarah Patel
-                            </td>
-
-                            <td>
-                                Dec 13, 2024
-                            </td>
-
-                            <td>
-
-                                <button type="button"
-                                        class="eye-button"
-                                        onclick="window.location.href='<%= ResolveUrl("~/Admin/InquiryDetails.aspx?id=INQ-2024-004") %>';"
-                                        title="View Inquiry">
-
-                                    <i class="fa-solid fa-eye"></i>
-
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-            <!-- =====================================
-                 TABLE FOOTER
-            ====================================== -->
-
-            <div class="table-footer">
-
-                <div class="showing-text">
-                    Showing 1-4 of 284 inquiries
+                                    </td>
+                                    <td>B.Sc Data Science</td>
+                                    <td>Walk-in</td>
+                                    <td><span class="status-badge converted"><i class="fas fa-circle"></i> Converted</span></td>
+                                    <td><span class="priority-indicator low"></span> Low</td>
+                                    <td>Sarah Patel</td>
+                                    <td>Dec 13, 2024</td>
+                                    <td>
+                                        <button class="action-btn" title="View Details" onclick="window.location.href='inquiry-details.html'"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn timeline-btn" title="View Timeline" onclick="window.location.href='inquiry-timeline.html'"><i class="fas fa-history"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination">
+                        <div class="pagination-info">Showing <strong>1-4</strong> of <strong>284</strong> inquiries</div>
+                        <div class="pagination-controls">
+                            <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="pagination">
-
-                    <button type="button"
-                            class="page-btn">
-                        ‹
-                    </button>
-
-                    <button type="button"
-                            class="page-btn active">
-                        1
-                    </button>
-
-                    <button type="button"
-                            class="page-btn">
-                        2
-                    </button>
-
-                    <button type="button"
-                            class="page-btn">
-                        3
-                    </button>
-
-                    <button type="button"
-                            class="page-btn">
-                        ›
-                    </button>
-
-                </div>
-
             </div>
-
-
-        </div>
-
-
-    </div>
-
-
+        </main>
 </asp:Content>

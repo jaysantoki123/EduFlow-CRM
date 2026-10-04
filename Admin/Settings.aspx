@@ -1,610 +1,1007 @@
-﻿<%@ Page Title="System Settings"
-    Language="C#"
-    MasterPageFile="~/Admin/Site1.Master"
-    AutoEventWireup="true"
-    CodeBehind="Settings.aspx.cs"
-    Inherits="EduCRM.Settings" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Admin/Site1.Master" AutoEventWireup="true" CodeBehind="Settings.aspx.cs" Inherits="EduFlow.Admin.Settings" %>
 
-<asp:Content ID="HeadContent"
-    ContentPlaceHolderID="head"
-    runat="server">
-
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
-        .settings-page {
-            padding: 28px 32px;
-            background: #f7f9fc;
-            min-height: calc(100vh - 70px);
-        }
-
-        .settings-header {
-            margin-bottom: 25px;
-        }
-
-        .settings-header h1 {
-            margin: 0;
-            font-size: 27px;
-            color: #1f2937;
-            font-weight: 700;
-        }
-
-        .settings-header p {
-            margin: 7px 0 0;
-            color: #7b8494;
-            font-size: 14px;
-        }
-
         .settings-layout {
             display: grid;
-            grid-template-columns: 230px 1fr;
-            gap: 22px;
+            grid-template-columns: 260px 1fr;
+            gap: var(--spacing-lg)
         }
 
-        .settings-menu {
-            background: white;
-            border: 1px solid #e6e9ef;
-            border-radius: 12px;
-            padding: 12px;
-            height: fit-content;
+        /* Settings Nav */
+        .settings-nav {
+            background: rgba(255,255,255,.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-md);
+            position: sticky;
+            top: 96px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto
         }
 
-        .menu-title {
+        .settings-nav-title {
             font-size: 12px;
-            font-weight: 700;
-            color: #9aa1ad;
-            padding: 10px 12px;
+            font-weight: 600;
+            color: var(--on-surface-variant);
             text-transform: uppercase;
+            letter-spacing: .05em;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-sm)
         }
 
-        .menu-item {
+        .settings-nav-item {
             display: flex;
             align-items: center;
-            gap: 11px;
-            padding: 12px;
-            border-radius: 7px;
-            color: #5c6573;
-            font-size: 13px;
-            margin-bottom: 3px;
+            gap: var(--spacing-sm);
+            padding: 10px var(--spacing-md);
+            border-radius: var(--radius-lg);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--on-surface-variant);
             cursor: pointer;
-}
-
-        .settings-menu .menu-item i {
-            width: 18px;
-            text-align: center;
-}
-
-        .settings-menu .menu-item.active {
-            background: #eeeeff;
-            color: #5b5ce2;
-            font-weight: 600;
-}
-
-        .settings-content {
-            min-width: 0;
+            transition: all .2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left
         }
 
-        .settings-card {
-            background: white;
-            border: 1px solid #e6e9ef;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
+            .settings-nav-item:hover {
+                background: var(--surface-container-low);
+                color: var(--on-surface)
+            }
+
+            .settings-nav-item.active {
+                background: rgba(79,70,229,.1);
+                color: var(--primary);
+                font-weight: 600
+            }
+
+            .settings-nav-item i {
+                width: 20px;
+                text-align: center;
+                font-size: 16px
+            }
+
+        .nav-divider {
+            height: 1px;
+            background: var(--border-subtle);
+            margin: var(--spacing-sm) var(--spacing-md)
         }
 
-        .card-heading {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 22px;
-            padding-bottom: 17px;
-            border-bottom: 1px solid #eef0f4;
+        /* Settings Content */
+        .settings-section {
+            background: rgba(255,255,255,.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg)
         }
 
-        .heading-icon {
-            width: 38px;
-            height: 38px;
-            background: #eeeeff;
-            color: #5b5ce2;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .heading-text h2 {
-            margin: 0;
-            font-size: 17px;
-            color: #252d3a;
-        }
-
-        .heading-text p {
-            margin: 4px 0 0;
-            font-size: 12px;
-            color: #9299a5;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            margin-bottom: 18px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group.full {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #454d5b;
-            margin-bottom: 7px;
-        }
-
-        .input-box,
-        .select-box {
-            height: 42px;
-            border: 1px solid #dfe3e9;
-            border-radius: 7px;
-            padding: 0 12px;
-            font-size: 13px;
-            color: #374151;
-            background: white;
-            outline: none;
-            box-sizing: border-box;
-        }
-
-        .input-box:focus,
-        .select-box:focus {
-            border-color: #5b5ce2;
-        }
-
-        textarea.input-box {
-            height: 85px;
-            padding-top: 12px;
-            resize: vertical;
-        }
-
-        .setting-row {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eef0f4;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--border-subtle)
         }
 
-        .setting-row:last-child {
-            border-bottom: none;
+        .section-title-icon {
+            display: flex;
+            align-items: center;
+            gap: 12px
         }
 
-        .setting-info strong {
-            display: block;
-            font-size: 13px;
-            color: #424a58;
-            margin-bottom: 4px;
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg,rgba(79,70,229,.1),rgba(0,81,213,.1));
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px
         }
 
-        .setting-info span {
-            font-size: 11px;
-            color: #9299a5;
+        .section-title h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0
         }
 
-        .switch {
-            position: relative;
-            width: 42px;
-            height: 22px;
-            flex-shrink: 0;
+        .section-title p {
+            font-size: 12px;
+            color: var(--on-surface-variant);
+            margin: 0
         }
 
-        .switch input {
-            display: none;
+        .form-group {
+            margin-bottom: var(--spacing-lg)
         }
 
-        .slider {
-            position: absolute;
-            inset: 0;
-            background: #d5d9e0;
-            border-radius: 20px;
-            cursor: pointer;
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--on-surface);
+            margin-bottom: 8px;
+            display: block
         }
 
-        .slider:before {
-            content: "";
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            left: 3px;
-            top: 3px;
+            .form-label.required::after {
+                content: '*';
+                color: var(--danger);
+                margin-left: 4px
+            }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--on-surface-variant);
+            margin-top: 4px
+        }
+
+        .form-control, .form-select {
+            height: 48px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            font-size: 14px;
             background: white;
-            border-radius: 50%;
-            transition: .2s;
+            width: 100%;
+            transition: all .2s
         }
 
-        .switch input:checked + .slider {
-            background: #5b5ce2;
+            .form-control:focus, .form-select:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(79,70,229,.1)
+            }
+
+        textarea.form-control {
+            height: 100px;
+            resize: vertical
         }
 
-        .switch input:checked + .slider:before {
-            transform: translateX(20px);
+        /* Toggle */
+        .setting-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md);
+            background: var(--surface-container-low);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: var(--spacing-md)
         }
 
-        .save-area {
+            .setting-toggle:last-child {
+                margin-bottom: 0
+            }
+
+        .toggle-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md)
+        }
+
+        .toggle-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--on-surface);
+            margin: 0
+        }
+
+        .toggle-desc {
+            font-size: 12px;
+            color: var(--on-surface-variant);
+            margin: 0
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0
+        }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0
+            }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: var(--border-subtle);
+            border-radius: 13px;
+            transition: .3s
+        }
+
+            .toggle-slider::before {
+                content: '';
+                position: absolute;
+                height: 20px;
+                width: 20px;
+                left: 3px;
+                bottom: 3px;
+                background: white;
+                border-radius: 50%;
+                transition: .3s;
+                box-shadow: 0 1px 3px rgba(0,0,0,.1)
+            }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--primary)
+        }
+
+            .toggle-switch input:checked + .toggle-slider::before {
+                transform: translateX(22px)
+            }
+
+        /* Theme Options */
+        .theme-options {
+            display: flex;
+            gap: var(--spacing-md)
+        }
+
+        .theme-option {
+            flex: 1;
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all .3s
+        }
+
+            .theme-option:hover {
+                border-color: var(--primary)
+            }
+
+            .theme-option.selected {
+                border-color: var(--primary);
+                background: rgba(79,70,229,.05)
+            }
+
+        .theme-preview {
+            height: 60px;
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-sm);
+            overflow: hidden;
+            display: flex
+        }
+
+        .theme-preview-sidebar {
+            width: 30%;
+            background: #0F172A
+        }
+
+        .theme-preview-content {
+            flex: 1;
+            background: #F8FAFC;
+            padding: 8px
+        }
+
+            .theme-preview-content.dark {
+                background: #1a1a2e
+            }
+
+        .theme-preview-sidebar.light {
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0
+        }
+
+        .theme-option-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0
+        }
+
+        /* Color Swatches */
+        .color-swatches {
+            display: flex;
+            gap: var(--spacing-sm)
+        }
+
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all .2s
+        }
+
+            .color-swatch:hover {
+                transform: scale(1.1)
+            }
+
+            .color-swatch.selected {
+                border-color: var(--on-surface);
+                box-shadow: 0 0 0 2px white,0 0 0 4px var(--on-surface)
+            }
+
+        /* Language Selector */
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
+            gap: var(--spacing-sm)
+        }
+
+        .language-option {
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+            .language-option:hover {
+                border-color: var(--primary)
+            }
+
+            .language-option.selected {
+                border-color: var(--primary);
+                background: rgba(79,70,229,.05)
+            }
+
+        .language-flag {
+            font-size: 24px;
+            margin-bottom: 4px
+        }
+
+        .language-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0
+        }
+
+        /* Backup Card */
+        .backup-card {
+            background: var(--surface-container-low);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm)
+        }
+
+        .backup-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm)
+        }
+
+        .backup-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0
+        }
+
+        .backup-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0
+        }
+
+        .backup-meta {
+            font-size: 12px;
+            color: var(--on-surface-variant);
+            margin: 0
+        }
+
+        .save-bar {
+            position: sticky;
+            bottom: 0;
+            background: rgba(255,255,255,.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-subtle);
+            padding: var(--spacing-md) var(--spacing-lg);
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
-            margin-top: 22px;
+            gap: var(--spacing-md);
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+            margin-top: calc(var(--spacing-lg) * -1)
         }
 
-        .btn {
-            padding: 10px 19px;
-            border-radius: 7px;
-            font-size: 13px;
-            cursor: pointer;
-            border: none;
-        }
-
-        .reset-btn {
-            background: white;
-            border: 1px solid #dfe3e9;
-            color: #596270;
-        }
-
-        .save-btn {
-            background: #5b5ce2;
-            color: white;
-        }
-
-        .save-btn i {
-            margin-right: 6px;
-        }
-
-        .danger-card {
-            border-left: 4px solid #e05252;
-        }
-
-        .danger-heading {
-            color: #d84848 !important;
-        }
-
-        .danger-text {
-            font-size: 12px;
-            color: #8d949f;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .danger-btn {
-            background: #fff2f2;
-            color: #d84848;
-            border: 1px solid #f2cccc;
-        }
-
-        @media (max-width: 850px) {
+        @media(max-width:1024px) {
             .settings-layout {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr
             }
 
-            .settings-menu {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .menu-title {
-                grid-column: 1 / -1;
+            .settings-nav {
+                position: static;
+                max-height: none
             }
         }
 
-        @media (max-width: 600px) {
-            .settings-page {
-                padding: 20px;
+        @media(max-width:768px) {
+            .theme-options {
+                flex-direction: column
+            }
+        }
+
+        @media (max-width: 768px) {
+            .calendar-layout {
+                grid-template-columns: 1fr !important;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
+            .search-box {
+                width: 100% !important;
             }
 
-            .settings-menu {
-                display: block;
+            .filter-group {
+                min-width: auto !important;
+                width: 100% !important;
+            }
+
+            .table-container, .user-table-card, .inquiry-table-card, .counseling-table-card,
+            .followup-table-card, .student-table-card, .application-table-card {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table, .user-table, .matrix-table {
+                min-width: 550px !important;
+            }
+
+            .matrix-table {
+                min-width: 800px !important;
+            }
+
+            .card-header {
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+            }
+
+            .table-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+
+            .table-actions {
+                width: 100% !important;
+                flex-wrap: wrap !important;
+            }
+
+            .table-footer {
+                flex-direction: column !important;
+                gap: 12px !important;
+                align-items: flex-start !important;
+            }
+
+            .permissions-detail-layout {
+                grid-template-columns: 1fr !important;
+            }
+
+            .role-cards-grid {
+                grid-template-columns: 1fr 1fr !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .filter-row {
+                grid-template-columns: 1fr !important;
+            }
+
+            .role-cards-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .quick-action-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            .users-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .form-actions {
+                flex-direction: column !important;
+            }
+
+                .form-actions .btn {
+                    width: 100% !important;
+                    justify-content: center !important;
+                }
+
+            .stats-grid-4 {
+                grid-template-columns: 1fr 1fr !important;
             }
         }
     </style>
-
 </asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
+    <main class="main-content" id="mainContent">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-right">
+                <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge"></span></button>
+                <button class="topbar-icon-btn"><i class="fas fa-user-circle"></i></button>
+            </div>
+        </header>
 
-
-<asp:Content ID="MainContent"
-    ContentPlaceHolderID="ContentPlaceHolder1"
-    runat="server">
-
-    <div class="settings-page">
-
-        <!-- HEADER -->
-        <div class="settings-header">
-            <h1>System Settings</h1>
-            <p>Manage your EduCRM system preferences and configuration.</p>
-        </div>
-
-
-        <div class="settings-layout">
-
-            <!-- LEFT MENU -->
-            <div class="settings-menu">
-
-                <div class="menu-title">Settings</div>
-
-                <div class="menu-item active">
-                    <i class="fas fa-sliders-h"></i>
-                    General
-                </div>
-
-                <div class="menu-item">
-                    <i class="fas fa-bell"></i>
-                    Notifications
-                </div>
-
-                <div class="menu-item">
-                    <i class="fas fa-shield-alt"></i>
-                    Security
-                </div>
-
-                <div class="menu-item">
-                    <i class="fas fa-database"></i>
-                    Backup
-                </div>
-
+        <div class="content-area">
+            <div class="mb-4">
+                <h1 class="headline-lg mb-1">System Settings</h1>
+                <p class="text-muted">Configure system preferences, appearance and security</p>
             </div>
 
+            <div class="settings-layout">
+                <!-- Settings Nav -->
+                <div class="settings-nav">
+                    <p class="settings-nav-title">Settings</p>
+                    <button class="settings-nav-item active" onclick="scrollToSection('general')"><i class="fas fa-sliders-h"></i>General</button>
+                    <button class="settings-nav-item" onclick="scrollToSection('appearance')"><i class="fas fa-palette"></i>Appearance</button>
+                    <button class="settings-nav-item" onclick="scrollToSection('notifications')"><i class="fas fa-bell"></i>Notifications</button>
+                    <button class="settings-nav-item" onclick="scrollToSection('security')"><i class="fas fa-lock"></i>Security</button>
+                    <button class="settings-nav-item" onclick="scrollToSection('localization')"><i class="fas fa-globe"></i>Localization</button>
+                    <div class="nav-divider"></div>
+                    <button class="settings-nav-item" onclick="scrollToSection('backup')"><i class="fas fa-database"></i>Backup & Data</button>
+                    <button class="settings-nav-item" onclick="scrollToSection('integrations')"><i class="fas fa-plug"></i>Integrations</button>
+                    <div class="nav-divider"></div>
+                    <a href="college-info.html" class="settings-nav-item"><i class="fas fa-university"></i>College Info</a>
+                    <a href="email-config.html" class="settings-nav-item"><i class="fas fa-envelope"></i>Email Config</a>
+                </div>
 
-            <!-- RIGHT CONTENT -->
-            <div class="settings-content">
-
-                <!-- GENERAL SETTINGS -->
-                <div class="settings-card">
-
-                    <div class="card-heading">
-
-                        <div class="heading-icon">
-                            <i class="fas fa-cog"></i>
+                <!-- Settings Content -->
+                <div>
+                    <!-- General -->
+                    <div class="settings-section" id="general">
+                        <div class="section-header">
+                            <div class="section-title-icon">
+                                <div class="section-icon"><i class="fas fa-sliders-h"></i></div>
+                                <div class="section-title">
+                                    <h3>General Settings</h3>
+                                    <p>Basic system configuration</p>
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="heading-text">
-                            <h2>General Settings</h2>
-                            <p>Basic information about your CRM system.</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Application Name</label><input type="text" class="form-control" value="Education CRM"><p class="form-hint">Displayed in browser tab and login screen</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Tagline</label><input type="text" class="form-control" value="Smart Admissions Management"></div>
+                            </div>
                         </div>
-
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Academic Year</label><select class="form-select"><option selected>2024-2025</option>
+                                        <option>2025-2026</option>
+                                    </select></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Default Timezone</label><select class="form-select"><option selected>Asia/Kolkata (IST)</option>
+                                        <option>Asia/Dubai (GST)</option>
+                                        <option>America/New_York (EST)</option>
+                                    </select></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Date Format</label><select class="form-select"><option selected>DD/MM/YYYY</option>
+                                        <option>MM/DD/YYYY</option>
+                                        <option>YYYY-MM-DD</option>
+                                    </select></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Time Format</label><select class="form-select"><option selected>12 Hour (AM/PM)</option>
+                                        <option>24 Hour</option>
+                                    </select></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Currency</label><select class="form-select" style="max-width: 300px"><option selected>₹ Indian Rupee (INR)</option>
+                                <option>$ US Dollar (USD)</option>
+                                <option>€ Euro (EUR)</option>
+                                <option>£ British Pound (GBP)</option>
+                            </select></div>
                     </div>
 
-
-                    <div class="form-row">
+                    <!-- Appearance -->
+                    <div class="settings-section" id="appearance">
+                        <div class="section-header">
+                            <div class="section-title-icon">
+                                <div class="section-icon"><i class="fas fa-palette"></i></div>
+                                <div class="section-title">
+                                    <h3>Appearance</h3>
+                                    <p>Customize the look and feel</p>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="form-group">
-                            <label>System Name</label>
-
-                            <input type="text"
-                                   class="input-box"
-                                   value="EduCRM" />
+                            <label class="form-label">Theme</label>
+                            <div class="theme-options">
+                                <div class="theme-option selected" onclick="selectTheme(this)">
+                                    <div class="theme-preview">
+                                        <div class="theme-preview-sidebar"></div>
+                                        <div class="theme-preview-content"></div>
+                                    </div>
+                                    <p class="theme-option-label">Light (Default)</p>
+                                </div>
+                                <div class="theme-option" onclick="selectTheme(this)">
+                                    <div class="theme-preview">
+                                        <div class="theme-preview-sidebar"></div>
+                                        <div class="theme-preview-content dark"></div>
+                                    </div>
+                                    <p class="theme-option-label">Dark</p>
+                                </div>
+                                <div class="theme-option" onclick="selectTheme(this)">
+                                    <div class="theme-preview">
+                                        <div class="theme-preview-sidebar light"></div>
+                                        <div class="theme-preview-content"></div>
+                                    </div>
+                                    <p class="theme-option-label">Light Sidebar</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">
-                            <label>Administrator Email</label>
-
-                            <input type="email"
-                                   class="input-box"
-                                   value="admin@educrm.com" />
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-                            <label>Language</label>
-
-                            <select class="select-box">
-                                <option selected="selected">English</option>
-                                <option>Hindi</option>
-                                <option>Gujarati</option>
-                            </select>
+                            <label class="form-label">Accent Color</label>
+                            <div class="color-swatches">
+                                <div class="color-swatch selected" style="background: #4f46e5" onclick="selectColor(this)"></div>
+                                <div class="color-swatch" style="background: #0051d5" onclick="selectColor(this)"></div>
+                                <div class="color-swatch" style="background: #006d62" onclick="selectColor(this)"></div>
+                                <div class="color-swatch" style="background: #22C55E" onclick="selectColor(this)"></div>
+                                <div class="color-swatch" style="background: #F59E0B" onclick="selectColor(this)"></div>
+                                <div class="color-swatch" style="background: #EF4444" onclick="selectColor(this)"></div>
+                                <div class="color-swatch" style="background: #8b5cf6" onclick="selectColor(this)"></div>
+                                <div class="color-swatch" style="background: #ec4899" onclick="selectColor(this)"></div>
+                            </div>
                         </div>
 
                         <div class="form-group">
-                            <label>Time Zone</label>
-
-                            <select class="select-box">
-                                <option selected="selected">
-                                    (GMT+05:30) India
-                                </option>
-                                <option>(GMT+00:00) UTC</option>
-                                <option>(GMT+05:00) Pakistan</option>
-                            </select>
+                            <label class="form-label">Sidebar Style</label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <select class="form-select">
+                                        <option selected>Expanded</option>
+                                        <option>Collapsed</option>
+                                        <option>Auto-hide</option>
+                                    </select></div>
+                            </div>
                         </div>
 
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(79,70,229,.1); color: var(--primary)"><i class="fas fa-expand-arrows-alt"></i></div>
+                                <div>
+                                    <p class="toggle-label">Compact Mode</p>
+                                    <p class="toggle-desc">Reduce spacing for more content visibility</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox"><span class="toggle-slider"></span></label>
+                        </div>
                     </div>
 
+                    <!-- Notifications -->
+                    <div class="settings-section" id="notifications">
+                        <div class="section-header">
+                            <div class="section-title-icon">
+                                <div class="section-icon"><i class="fas fa-bell"></i></div>
+                                <div class="section-title">
+                                    <h3>Notification Preferences</h3>
+                                    <p>Control how you receive notifications</p>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="form-group full">
-                        <label>System Description</label>
-
-                        <textarea class="input-box">EduCRM - Education Customer Relationship Management System</textarea>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(79,70,229,.1); color: var(--primary)"><i class="fas fa-desktop"></i></div>
+                                <div>
+                                    <p class="toggle-label">In-App Notifications</p>
+                                    <p class="toggle-desc">Show notifications inside the CRM</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(0,81,213,.1); color: var(--info)"><i class="fas fa-envelope"></i></div>
+                                <div>
+                                    <p class="toggle-label">Email Notifications</p>
+                                    <p class="toggle-desc">Send important alerts via email</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(34,197,94,.1); color: var(--success)"><i class="fab fa-whatsapp"></i></div>
+                                <div>
+                                    <p class="toggle-label">WhatsApp Notifications</p>
+                                    <p class="toggle-desc">Send alerts via WhatsApp</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(245,158,11,.1); color: var(--warning)"><i class="fas fa-sms"></i></div>
+                                <div>
+                                    <p class="toggle-label">SMS Notifications</p>
+                                    <p class="toggle-desc">Send SMS for critical updates</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox"><span class="toggle-slider"></span></label></div>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(239,68,68,.1); color: var(--danger)"><i class="fas fa-volume-up"></i></div>
+                                <div>
+                                    <p class="toggle-label">Sound Alerts</p>
+                                    <p class="toggle-desc">Play sound for new notifications</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
                     </div>
 
+                    <!-- Security -->
+                    <div class="settings-section" id="security">
+                        <div class="section-header">
+                            <div class="section-title-icon">
+                                <div class="section-icon"><i class="fas fa-lock"></i></div>
+                                <div class="section-title">
+                                    <h3>Security Settings</h3>
+                                    <p>Manage authentication and access policies</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(34,197,94,.1); color: var(--success)"><i class="fas fa-shield-alt"></i></div>
+                                <div>
+                                    <p class="toggle-label">Two-Factor Authentication (2FA)</p>
+                                    <p class="toggle-desc">Require 2FA for all users on login</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(79,70,229,.1); color: var(--primary)"><i class="fas fa-key"></i></div>
+                                <div>
+                                    <p class="toggle-label">Force Password Change</p>
+                                    <p class="toggle-desc">Require password change every 90 days</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(245,158,11,.1); color: var(--warning)"><i class="fas fa-user-lock"></i></div>
+                                <div>
+                                    <p class="toggle-label">Account Lockout</p>
+                                    <p class="toggle-desc">Lock account after 5 failed login attempts</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Session Timeout</label><select class="form-select"><option>15 minutes</option>
+                                        <option selected>30 minutes</option>
+                                        <option>1 hour</option>
+                                        <option>2 hours</option>
+                                    </select></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Minimum Password Length</label><select class="form-select"><option>6 characters</option>
+                                        <option selected>8 characters</option>
+                                        <option>10 characters</option>
+                                        <option>12 characters</option>
+                                    </select></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Localization -->
+                    <div class="settings-section" id="localization">
+                        <div class="section-header">
+                            <div class="section-title-icon">
+                                <div class="section-icon"><i class="fas fa-globe"></i></div>
+                                <div class="section-title">
+                                    <h3>Localization</h3>
+                                    <p>Language and regional settings</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Language</label>
+                            <div class="language-grid">
+                                <div class="language-option selected" onclick="selectLanguage(this)">
+                                    <div class="language-flag">🇬🇧</div>
+                                    <p class="language-name">English</p>
+                                </div>
+                                <div class="language-option" onclick="selectLanguage(this)">
+                                    <div class="language-flag">🇮🇳</div>
+                                    <p class="language-name">Hindi</p>
+                                </div>
+                                <div class="language-option" onclick="selectLanguage(this)">
+                                    <div class="language-flag">🇫🇷</div>
+                                    <p class="language-name">French</p>
+                                </div>
+                                <div class="language-option" onclick="selectLanguage(this)">
+                                    <div class="language-flag">🇪🇸</div>
+                                    <p class="language-name">Spanish</p>
+                                </div>
+                                <div class="language-option" onclick="selectLanguage(this)">
+                                    <div class="language-flag">🇸🇦</div>
+                                    <p class="language-name">Arabic</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backup -->
+                    <div class="settings-section" id="backup">
+                        <div class="section-header">
+                            <div class="section-title-icon">
+                                <div class="section-icon"><i class="fas fa-database"></i></div>
+                                <div class="section-title">
+                                    <h3>Backup & Data</h3>
+                                    <p>Manage database backups</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary"><i class="fas fa-download"></i>Create Backup</button></div>
+
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(34,197,94,.1); color: var(--success)"><i class="fas fa-sync-alt"></i></div>
+                                <div>
+                                    <p class="toggle-label">Auto Backup</p>
+                                    <p class="toggle-desc">Daily automatic database backup at 2:00 AM</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+
+                        <h4 style="font-size: 16px; font-weight: 600; margin: var(--spacing-lg) 0 var(--spacing-md)">Recent Backups</h4>
+                        <div class="backup-card">
+                            <div class="backup-info">
+                                <div class="backup-icon" style="background: rgba(34,197,94,.1); color: var(--success)"><i class="fas fa-check-circle"></i></div>
+                                <div>
+                                    <p class="backup-name">backup_2024-12-16_02-00.sql</p>
+                                    <p class="backup-meta">245 MB • Dec 16, 2024 at 2:00 AM</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-secondary"><i class="fas fa-download"></i>Download</button></div>
+                        <div class="backup-card">
+                            <div class="backup-info">
+                                <div class="backup-icon" style="background: rgba(34,197,94,.1); color: var(--success)"><i class="fas fa-check-circle"></i></div>
+                                <div>
+                                    <p class="backup-name">backup_2024-12-15_02-00.sql</p>
+                                    <p class="backup-meta">243 MB • Dec 15, 2024 at 2:00 AM</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-secondary"><i class="fas fa-download"></i>Download</button></div>
+                        <div class="backup-card">
+                            <div class="backup-info">
+                                <div class="backup-icon" style="background: rgba(34,197,94,.1); color: var(--success)"><i class="fas fa-check-circle"></i></div>
+                                <div>
+                                    <p class="backup-name">backup_2024-12-14_02-00.sql</p>
+                                    <p class="backup-meta">240 MB • Dec 14, 2024 at 2:00 AM</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-secondary"><i class="fas fa-download"></i>Download</button></div>
+                    </div>
+
+                    <!-- Integrations -->
+                    <div class="settings-section" id="integrations">
+                        <div class="section-header">
+                            <div class="section-title-icon">
+                                <div class="section-icon"><i class="fas fa-plug"></i></div>
+                                <div class="section-title">
+                                    <h3>Integrations</h3>
+                                    <p>Third-party service connections</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(66,133,244,.1); color: #4285f4"><i class="fab fa-google"></i></div>
+                                <div>
+                                    <p class="toggle-label">Google Workspace</p>
+                                    <p class="toggle-desc">Calendar sync, Meet integration</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(37,211,102,.1); color: #25d366"><i class="fab fa-whatsapp"></i></div>
+                                <div>
+                                    <p class="toggle-label">WhatsApp Business API</p>
+                                    <p class="toggle-desc">Automated messaging and follow-ups</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(0,119,181,.1); color: #0077b5"><i class="fas fa-sms"></i></div>
+                                <div>
+                                    <p class="toggle-label">SMS Gateway</p>
+                                    <p class="toggle-desc">Twilio / MSG91 for SMS alerts</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox"><span class="toggle-slider"></span></label></div>
+                        <div class="setting-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-icon" style="background: rgba(99,102,241,.1); color: #6366f1"><i class="fas fa-credit-card"></i></div>
+                                <div>
+                                    <p class="toggle-label">Payment Gateway</p>
+                                    <p class="toggle-desc">Razorpay for online fee collection</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+                    </div>
+
+                    <!-- Save Bar -->
+                    <div class="save-bar">
+                        <button class="btn btn-secondary"><i class="fas fa-undo"></i>Reset to Default</button>
+                        <button class="btn btn-primary" onclick="alert('Settings saved!')"><i class="fas fa-save"></i>Save Changes</button>
+                    </div>
                 </div>
-
-
-                <!-- NOTIFICATION SETTINGS -->
-                <div class="settings-card">
-
-                    <div class="card-heading">
-
-                        <div class="heading-icon">
-                            <i class="fas fa-bell"></i>
-                        </div>
-
-                        <div class="heading-text">
-                            <h2>Notification Settings</h2>
-                            <p>Control system notifications and alerts.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="setting-row">
-
-                        <div class="setting-info">
-                            <strong>Email Notifications</strong>
-                            <span>Receive important updates through email.</span>
-                        </div>
-
-                        <label class="switch">
-                            <input type="checkbox" checked="checked" />
-                            <span class="slider"></span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="setting-row">
-
-                        <div class="setting-info">
-                            <strong>New Inquiry Alerts</strong>
-                            <span>Get notified when a new inquiry is received.</span>
-                        </div>
-
-                        <label class="switch">
-                            <input type="checkbox" checked="checked" />
-                            <span class="slider"></span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="setting-row">
-
-                        <div class="setting-info">
-                            <strong>Course Updates</strong>
-                            <span>Receive notifications about course changes.</span>
-                        </div>
-
-                        <label class="switch">
-                            <input type="checkbox" />
-                            <span class="slider"></span>
-                        </label>
-
-                    </div>
-
-                </div>
-
-
-                <!-- SECURITY -->
-                <div class="settings-card">
-
-                    <div class="card-heading">
-
-                        <div class="heading-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-
-                        <div class="heading-text">
-                            <h2>Security Settings</h2>
-                            <p>Manage account and system security options.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="setting-row">
-
-                        <div class="setting-info">
-                            <strong>Two-Factor Authentication</strong>
-                            <span>Add an extra layer of account security.</span>
-                        </div>
-
-                        <label class="switch">
-                            <input type="checkbox" />
-                            <span class="slider"></span>
-                        </label>
-
-                    </div>
-
-
-                    <div class="setting-row">
-
-                        <div class="setting-info">
-                            <strong>Automatic Logout</strong>
-                            <span>Automatically log out inactive users.</span>
-                        </div>
-
-                        <label class="switch">
-                            <input type="checkbox" checked="checked" />
-                            <span class="slider"></span>
-                        </label>
-
-                    </div>
-
-                </div>
-
-
-                <!-- SAVE BUTTONS -->
-                <div class="save-area">
-
-                    <button type="button" class="btn reset-btn">
-                        Reset
-                    </button>
-
-                    <button type="button" class="btn save-btn">
-                        <i class="fas fa-save"></i>
-                        Save Changes
-                    </button>
-
-                </div>
-
-
-                <!-- DANGER ZONE -->
-                <div class="settings-card danger-card"
-                     style="margin-top:20px;">
-
-                    <div class="card-heading">
-
-                        <div class="heading-icon"
-                             style="background:#fff1f1;color:#d84848;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-
-                        <div class="heading-text">
-                            <h2 class="danger-heading">
-                                Danger Zone
-                            </h2>
-
-                            <p>
-                                Actions in this section should be used carefully.
-                            </p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="danger-text">
-                        Resetting system settings may remove your current
-                        configuration and restore the default settings.
-                    </div>
-
-                    <button type="button"
-                            class="btn danger-btn">
-                        <i class="fas fa-undo"></i>
-                        Reset System Settings
-                    </button>
-
-                </div>
-
             </div>
-
         </div>
+    </main>
 
-    </div>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function () { document.getElementById('sidebar').classList.toggle('collapsed'); document.getElementById('mainContent').classList.toggle('sidebar-collapsed') });
 
+        function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' }); document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active')); event.currentTarget.classList.add('active') }
+        function selectTheme(el) { document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('selected')); el.classList.add('selected') }
+        function selectColor(el) { document.querySelectorAll('.color-swatch').forEach(o => o.classList.remove('selected')); el.classList.add('selected') }
+        function selectLanguage(el) { document.querySelectorAll('.language-option').forEach(o => o.classList.remove('selected')); el.classList.add('selected') }
+    </script>
 </asp:Content>

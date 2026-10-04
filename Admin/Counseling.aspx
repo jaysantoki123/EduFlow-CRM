@@ -1,1075 +1,884 @@
-﻿<%@ Page Title="Counseling Monitoring"
-    Language="C#"
-    MasterPageFile="~/Admin/Site1.Master"
-    AutoEventWireup="true"
-    CodeBehind="Counseling.aspx.cs"
-    Inherits="EduCRM.Counseling" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Admin/Site1.Master" AutoEventWireup="true" CodeBehind="Counseling.aspx.cs" Inherits="EduFlow.Admin.Counseling" %>
 
-<asp:Content ID="HeadContent"
-    ContentPlaceHolderID="head"
-    runat="server">
-
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+    Counseling List  - EduFlow CRM
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
-
-        /* =====================================================
-           COUNSELING MONITORING PAGE
-           Page-specific CSS only
-           ===================================================== */
-
-        .counseling-page {
-            width: 100%;
-            min-height: calc(100vh - 70px);
-            padding: 24px;
-            background: #F8FAFC;
-            font-family: 'Inter', Arial, sans-serif;
-            color: #111C2D;
-            box-sizing: border-box;
-        }
-
-        .counseling-page *,
-        .counseling-page *::before,
-        .counseling-page *::after {
-            box-sizing: border-box;
-        }
-
-        /* ================= HEADER ================= */
-
-        .counseling-header {
+        /* View Toggle */
+        .view-toggle {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 22px;
-            gap: 20px;
-        }
-
-        .counseling-title h1 {
-            margin: 0 0 5px 0;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 30px;
-            font-weight: 600;
-            line-height: 40px;
-            color: #111C2D;
-        }
-
-        .counseling-title p {
-            margin: 0;
-            font-size: 13px;
-            line-height: 21px;
-            color: #64748B;
-        }
-
-        .calendar-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 10px 15px;
-            border: 1px solid #DDE3FF;
-            border-radius: 9px;
-            background: #EEF2FF;
-            color: #4F46E5;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .calendar-btn:hover {
-            background: #E0E7FF;
-        }
-
-        /* ================= VIEW TABS ================= */
-
-        .view-tabs {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-bottom: 20px;
-        }
-
-        .view-tab {
-            border: none;
-            background: transparent;
-            color: #64748B;
-            padding: 8px 13px;
-            border-radius: 8px;
-            font-family: 'Inter', Arial, sans-serif;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .view-tab i {
-            margin-right: 5px;
-        }
-
-        .view-tab.active {
-            color: #FFFFFF;
-            background: #4F46E5;
-            box-shadow: 0 2px 7px rgba(79, 70, 229, .25);
-        }
-
-        /* ================= STAT CARDS ================= */
-
-        .counseling-stats {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .counseling-stat { 
-    background: #FFFFFF; 
-    border: 1px solid #E2E8F0; 
-    border-radius: 14px; 
-    padding: 18px; 
-    min-height: 125px; 
-    box-shadow: 0 2px 8px rgba(15, 23, 42, .03);
-
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
-}
-
-.counseling-stat:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(15, 23, 42, .10);
-}
-
-        .stat-content {
-            display: flex;
-            align-items: flex-start;
-            gap: 13px;
-        }
-
-        .stat-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 18px;
-        }
-
-        .icon-purple {
-            background: #EEF2FF;
-            color: #4F46E5;
-        }
-
-        .icon-green {
-            background: #ECFDF3;
-            color: #22C55E;
-        }
-
-        .icon-orange {
-            background: #FFF7E6;
-            color: #F59E0B;
-        }
-
-        .icon-blue {
-            background: #EFF6FF;
-            color: #2563EB;
-        }
-
-        .stat-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: #64748B;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            font-size: 23px;
-            font-weight: 600;
-            color: #111C2D;
-            line-height: 28px;
-        }
-
-        .stat-small {
-            margin-top: 5px;
-            font-size: 10px;
-            color: #64748B;
-        }
-
-        .green-text {
-            color: #22C55E;
-        }
-
-        .orange-text {
-            color: #F59E0B;
-        }
-
-        .blue-text {
-            color: #2563EB;
-        }
-
-        /* ================= SESSION FILTER ================= */
-
-        .session-tabs {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 11px;
+            background: var(--surface-container);
+            border-radius: var(--radius-full);
             padding: 4px;
-            margin-bottom: 18px;
+            gap: 4px;
+        }
+
+        .view-toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            ;
+            background: transparent;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--on-surface-variant);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .view-toggle-btn.active {
+                background: var(--primary);
+                color: white;
+                box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+            }
+
+        /* Tabs Navigation */
+        .tabs-nav {
+            display: flex;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            padding: 8px;
+            gap: 4px;
+            margin-bottom: var(--spacing-lg);
             overflow-x: auto;
         }
 
-        .session-tab {
+        .tab-btn {
+            padding: 10px 20px;
             border: none;
             background: transparent;
-            color: #64748B;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-family: 'Inter', Arial, sans-serif;
-            font-size: 10px;
-            white-space: nowrap;
+            border-radius: var(--radius-lg);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--on-surface-variant);
             cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            position: relative;
         }
 
-        .session-tab span {
-            margin-left: 4px;
-            color: #94A3B8;
+            .tab-btn:hover {
+                background: var(--surface-container);
+            }
+
+            .tab-btn.active {
+                background: var(--primary);
+                color: white;
+            }
+
+        .tab-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
         }
 
-        .session-tab.active {
-            color: #FFFFFF;
-            background: #4F46E5;
+        .tab-btn .tab-count {
+            background: rgba(255, 255, 255, 0.2);
+            color: inherit;
         }
 
-        .session-tab.active span {
-            color: #FFFFFF;
+        .tab-btn:not(.active) .tab-count {
+            background: var(--surface-container-high);
+            color: var(--on-surface-variant);
         }
 
-        /* ================= SESSION GRID ================= */
-
-        .session-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
+        /* Sessions Grid */
+        .sessions-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: var(--spacing-lg);
         }
 
-        /* ================= SESSION CARD ================= */
+            .sessions-grid.active {
+                display: grid;
+            }
 
-        .session-card { 
-    background: #FFFFFF; 
-    border: 1px solid #E2E8F0; 
-    border-top: 3px solid #4F46E5; 
-    border-radius: 12px; 
-    padding: 16px; 
-    box-shadow: 0 2px 8px rgba(15, 23, 42, .03);
-
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.session-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(15, 23, 42, .10);
-}
-
-        .session-card.ongoing {
-            border-top-color: #F59E0B;
+        .session-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .session-card.completed {
-            border-top-color: #22C55E;
+            .session-card:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-lg);
+            }
+
+        .session-card-stripe {
+            height: 4px;
         }
 
-        .session-card.rescheduled {
-            border-top-color: #2563EB;
+            .session-card-stripe.scheduled {
+                background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            }
+
+            .session-card-stripe.completed {
+                background: linear-gradient(90deg, var(--success) 0%, #16a34a 100%);
+            }
+
+            .session-card-stripe.cancelled {
+                background: linear-gradient(90deg, var(--danger) 0%, #dc2626 100%);
+            }
+
+            .session-card-stripe.ongoing {
+                background: linear-gradient(90deg, var(--warning) 0%, #d97706 100%);
+            }
+
+            .session-card-stripe.rescheduled {
+                background: linear-gradient(90deg, var(--info) 0%, #0041a8 100%);
+            }
+
+        .session-card-body {
+            padding: var(--spacing-lg);
         }
 
         .session-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
-        }
-
-        .session-id {
-            font-size: 10px;
-            color: #4F46E5;
-            font-weight: 600;
-        }
-
-        .session-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            font-size: 9px;
-            font-weight: 600;
-        }
-
-        .session-status.scheduled {
-            background: #EEF2FF;
-            color: #4F46E5;
-        }
-
-        .session-status.ongoing {
-            background: #FFF7E6;
-            color: #F59E0B;
-        }
-
-        .session-status.completed {
-            background: #ECFDF3;
-            color: #22C55E;
-        }
-
-        .session-status.rescheduled {
-            background: #EFF6FF;
-            color: #2563EB;
-        }
-
-        /* ================= STUDENT ================= */
-
-        .student-row {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            margin-bottom: 14px;
-        }
-
-        .student-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FFFFFF;
-            background: linear-gradient(135deg, #4F46E5, #0051D5);
-            font-size: 11px;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .student-info h3 {
-            margin: 0 0 2px 0;
-            font-size: 13px;
-            font-weight: 600;
-            color: #111C2D;
-        }
-
-        .student-info p {
-            margin: 0;
-            font-size: 10px;
-            color: #64748B;
-        }
-
-        /* ================= SESSION DETAILS ================= */
-
-        .session-details {
-            background: #F0F3FF;
-            border-radius: 10px;
-            padding: 12px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 9px 15px;
-            margin-bottom: 13px;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            min-width: 0;
-        }
-
-        .detail-item i {
-            color: #4F46E5;
-            width: 13px;
-            font-size: 10px;
-            text-align: center;
-        }
-
-        .detail-item span {
-            color: #475569;
-            font-size: 9px;
-            line-height: 14px;
-        }
-
-        /* ================= COUNSELOR ================= */
-
-        .counselor-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 11px;
-            border-top: 1px solid #E2E8F0;
             margin-bottom: 12px;
         }
 
-        .counselor-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .session-id {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
         }
 
-        .counselor-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #EEF2FF;
-            color: #4F46E5;
+        .session-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .session-status.scheduled {
+                background: rgba(79, 70, 229, 0.1);
+                color: var(--primary);
+            }
+
+            .session-status.completed {
+                background: rgba(34, 197, 94, 0.1);
+                color: var(--success);
+            }
+
+            .session-status.ongoing {
+                background: rgba(245, 158, 11, 0.1);
+                color: var(--warning);
+            }
+
+            .session-status.cancelled {
+                background: rgba(239, 68, 68, 0.1);
+                color: var(--danger);
+            }
+
+            .session-status.rescheduled {
+                background: rgba(0, 81, 213, 0.1);
+                color: var(--info);
+            }
+
+        .session-student {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .session-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            color: white;
             font-weight: 700;
+            font-size: 15px;
         }
 
-        .counselor-text {
-            font-size: 9px;
-            color: #64748B;
+        .session-student-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--on-surface);
+            margin: 0 0 2px;
         }
 
-        .counselor-text strong {
-            display: block;
-            color: #334155;
-            font-size: 10px;
-            margin-bottom: 2px;
+        .session-student-course {
+            font-size: 13px;
+            color: var(--on-surface-variant);
+            margin: 0;
         }
 
-        .view-session-btn {
+        .session-details-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: var(--surface-container-low);
+            padding: 12px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+        }
+
+        .session-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--on-surface-variant);
+        }
+
+            .session-detail i {
+                color: var(--primary);
+                width: 14px;
+            }
+
+        .session-counselor {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .counselor-avatar-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .counselor-name-sm {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--on-surface);
+        }
+
+        .counselor-role-sm {
+            font-size: 11px;
+            color: var(--on-surface-variant);
+            margin: 0;
+        }
+
+        .session-card-footer {
+            padding: 12px var(--spacing-lg);
+            background: var(--surface-container-low);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        /* Performance Section */
+        .performance-section {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+            margin-top: var(--spacing-lg);
+            display: none;
+        }
+
+            .performance-section.active {
+                display: block;
+            }
+
+        .performance-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-view {
+            display: none;
+        }
+
+            .table-view.active {
+                display: block;
+            }
+
+        .sessions-table-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+        }
+
+        .sessions-table {
             width: 100%;
-            height: 30px;
-            border: none;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #4F46E5, #4338CA);
-            color: #FFFFFF;
-            font-family: 'Inter', Arial, sans-serif;
-            font-size: 9px;
+            border-collapse: collapse;
+        }
+
+            .sessions-table th {
+                padding: 14px 16px;
+                background: var(--surface-container-low);
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: var(--on-surface-variant);
+                border-bottom: 1px solid var(--border-subtle);
+            }
+
+            .sessions-table td {
+                padding: 14px 16px;
+                border-bottom: 1px solid var(--border-subtle);
+                font-size: 14px;
+            }
+
+        .table-footer {
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-subtle);
+            background: white;
+            border-radius: var(--radius-md);
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .view-session-btn:hover {
-            background: linear-gradient(135deg, #4338CA, #3730A3);
+            .action-btn:hover {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+
+        #cardView,
+        #tableView,
+        #perfView {
+            display: none;
         }
 
-        .view-session-btn i {
-            margin-right: 5px;
-        }
-
-        /* ================= RESPONSIVE ================= */
-
-        @media (max-width: 1100px) {
-
-            .counseling-stats {
-                grid-template-columns: repeat(2, 1fr);
+            #cardView.active {
+                display: grid;
             }
 
-            .session-grid {
-                grid-template-columns: 1fr;
+            #tableView.active,
+            #perfView.active {
+                display: block;
             }
-        }
-
-        @media (max-width: 700px) {
-
-            .counseling-page {
-                padding: 16px;
-            }
-
-            .counseling-header {
-                flex-direction: column;
-            }
-
-            .counseling-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .session-details {
-                grid-template-columns: 1fr;
-            }
-        }
-
     </style>
 
 </asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
+    <main class="main-content" id="mainContent">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                <div class="topbar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search counseling sessions...">
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge"></span></button>
+                <button class="topbar-icon-btn"><i class="fas fa-user-circle"></i></button>
+            </div>
+        </header>
 
+        <div class="content-area">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div>
+                    <h1 class="headline-lg mb-1">Counseling Monitoring</h1>
+                    <p class="text-muted mb-0">Monitor all student counseling sessions, counselor ratings, and appointment schedules</p>
+                </div>
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <div class="view-toggle">
+                        <button type="button" class="view-toggle-btn active" id="cardViewBtn">
+                            <i class="fas fa-th-large"></i>Cards
+                        </button>
 
-<asp:Content ID="MainContent"
-    ContentPlaceHolderID="ContentPlaceHolder1"
-    runat="server">
+                        <button type="button" class="view-toggle-btn" id="tableViewBtn">
+                            <i class="fas fa-list"></i>Table
+                        </button>
 
-    <div class="counseling-page">
-
-        <!-- ================= HEADER ================= -->
-
-        <div class="counseling-header">
-
-            <div class="counseling-title">
-
-                <h1>Counseling Monitoring</h1>
-
-                <p>
-                    Monitor all student counseling sessions, counselor ratings, and appointment schedules
-                </p>
-
+                        <button type="button" class="view-toggle-btn" id="perfViewBtn">
+                            <i class="fas fa-chart-bar"></i>Performance
+                        </button>
+                    </div>
+                    <a href="counselor-calendar.html" class="btn btn-outline-primary">
+                        <i class="far fa-calendar-alt me-1"></i>Counseling Calendar
+                    </a>
+                </div>
             </div>
 
-            <button type="button" class="calendar-btn">
-                <i class="fas fa-calendar-alt"></i>
-                Counseling Calendar
-            </button>
-
-        </div>
-
-
-        <!-- ================= VIEW TABS ================= -->
-
-        <div class="view-tabs">
-
-            <button type="button" class="view-tab active">
-                <i class="fas fa-th-large"></i>
-                Cards
-            </button>
-
-            <button type="button" class="view-tab">
-                <i class="fas fa-table"></i>
-                Table
-            </button>
-
-            <button type="button" class="view-tab">
-                <i class="fas fa-chart-line"></i>
-                Performance
-            </button>
-
-        </div>
-
-
-        <!-- ================= STATISTICS ================= -->
-
-        <div class="counseling-stats">
-
-            <!-- TODAY'S SESSIONS -->
-
-            <div class="counseling-stat">
-
-                <div class="stat-content">
-
-                    <div class="stat-icon icon-purple">
-                        <i class="fas fa-calendar-check"></i>
+            <!-- Stats Overview -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon primary"><i class="fas fa-calendar-check"></i></div>
+                        <div class="stats-content">
+                            <div class="stats-label">Today's Sessions</div>
+                            <div class="stats-value">8</div>
+                            <div class="stats-change positive"><i class="fas fa-arrow-up"></i>3 scheduled today</div>
+                        </div>
                     </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon success"><i class="fas fa-check-double"></i></div>
+                        <div class="stats-content">
+                            <div class="stats-label">Completed Sessions</div>
+                            <div class="stats-value">124</div>
+                            <div class="stats-change positive"><i class="fas fa-chart-line"></i>85% completion rate</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon warning"><i class="fas fa-star"></i></div>
+                        <div class="stats-content">
+                            <div class="stats-label">Avg Counselor Rating</div>
+                            <div class="stats-value">4.8 / 5.0</div>
+                            <div class="stats-change positive"><i class="fas fa-smile"></i>High student feedback</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon info"><i class="fas fa-user-friends"></i></div>
+                        <div class="stats-content">
+                            <div class="stats-label">Active Counselors</div>
+                            <div class="stats-value">8 Counselors</div>
+                            <div class="stats-change positive"><i class="fas fa-check-circle"></i>100% capacity</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Session Filters Tabs -->
+            <div class="tabs-nav" id="sessionsTabs">
+                <button class="tab-btn active" data-tab="all">All Sessions <span class="tab-count">148</span></button>
+                <button class="tab-btn" data-tab="scheduled">Scheduled <span class="tab-count">18</span></button>
+                <button class="tab-btn" data-tab="ongoing">Ongoing <span class="tab-count">3</span></button>
+                <button class="tab-btn" data-tab="completed">Completed <span class="tab-count">124</span></button>
+                <button class="tab-btn" data-tab="rescheduled">Rescheduled <span class="tab-count">5</span></button>
+            </div>
+
+            <!-- 1. Card View -->
+            <div class="sessions-grid active" id="cardView">
+                <!-- Session Card 1 -->
+                <div class="session-card">
+                    <div class="session-card-stripe scheduled"></div>
+                    <div class="session-card-body">
+                        <div class="session-top">
+                            <span class="session-id">#COU-2024-0045</span>
+                            <span class="session-status scheduled"><i class="fas fa-circle" style="font-size: 8px"></i>Scheduled</span>
+                        </div>
+                        <div class="session-student">
+                            <div class="session-avatar">RK</div>
+                            <div>
+                                <p class="session-student-name">Rajesh Kumar</p>
+                                <p class="session-student-course">B.Tech Computer Science</p>
+                            </div>
+                        </div>
+                        <div class="session-details-row">
+                            <div class="session-detail"><i class="far fa-calendar"></i><span>Dec 18, 2024</span></div>
+                            <div class="session-detail"><i class="far fa-clock"></i><span>10:00 AM - 11:00 AM</span></div>
+                            <div class="session-detail"><i class="fas fa-video"></i><span>Online (Zoom)</span></div>
+                            <div class="session-detail"><i class="fas fa-tag"></i><span>First Counseling</span></div>
+                        </div>
+                        <div class="session-counselor">
+                            <div class="counselor-avatar-sm">SP</div>
+                            <div>
+                                <p class="counselor-name-sm">Sarah Patel</p>
+                                <p class="counselor-role-sm">Senior Counselor</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="session-card-footer">
+                        <button class="btn btn-sm btn-primary w-100" onclick="window.location.href='counseling-details.html'"><i class="fas fa-eye me-1"></i>View Session Details</button>
+                    </div>
+                </div>
+
+                <!-- Session Card 2 -->
+                <div class="session-card">
+                    <div class="session-card-stripe ongoing"></div>
+                    <div class="session-card-body">
+                        <div class="session-top">
+                            <span class="session-id">#COU-2024-0044</span>
+                            <span class="session-status ongoing"><i class="fas fa-circle" style="font-size: 8px"></i>Ongoing</span>
+                        </div>
+                        <div class="session-student">
+                            <div class="session-avatar">PS</div>
+                            <div>
+                                <p class="session-student-name">Priya Sharma</p>
+                                <p class="session-student-course">MBA Finance</p>
+                            </div>
+                        </div>
+                        <div class="session-details-row">
+                            <div class="session-detail"><i class="far fa-calendar"></i><span>Dec 16, 2024</span></div>
+                            <div class="session-detail"><i class="far fa-clock"></i><span>2:00 PM - 3:00 PM</span></div>
+                            <div class="session-detail"><i class="fas fa-building"></i><span>Office - Room 205</span></div>
+                            <div class="session-detail"><i class="fas fa-tag"></i><span>Career Guidance</span></div>
+                        </div>
+                        <div class="session-counselor">
+                            <div class="counselor-avatar-sm">RG</div>
+                            <div>
+                                <p class="counselor-name-sm">Rahul Gupta</p>
+                                <p class="counselor-role-sm">Counselor</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="session-card-footer">
+                        <button class="btn btn-sm btn-primary w-100" onclick="window.location.href='counseling-details.html'"><i class="fas fa-eye me-1"></i>View Session Details</button>
+                    </div>
+                </div>
+
+                <!-- Session Card 3 -->
+                <div class="session-card">
+                    <div class="session-card-stripe completed"></div>
+                    <div class="session-card-body">
+                        <div class="session-top">
+                            <span class="session-id">#COU-2024-0043</span>
+                            <span class="session-status completed"><i class="fas fa-circle" style="font-size: 8px"></i>Completed</span>
+                        </div>
+                        <div class="session-student">
+                            <div class="session-avatar">AV</div>
+                            <div>
+                                <p class="session-student-name">Amit Verma</p>
+                                <p class="session-student-course">BCA</p>
+                            </div>
+                        </div>
+                        <div class="session-details-row">
+                            <div class="session-detail"><i class="far fa-calendar"></i><span>Dec 15, 2024</span></div>
+                            <div class="session-detail"><i class="far fa-clock"></i><span>11:00 AM - 12:00 PM</span></div>
+                            <div class="session-detail"><i class="fas fa-video"></i><span>Online (Meet)</span></div>
+                            <div class="session-detail"><i class="fas fa-tag"></i><span>Follow-up</span></div>
+                        </div>
+                        <div class="session-counselor">
+                            <div class="counselor-avatar-sm">MP</div>
+                            <div>
+                                <p class="counselor-name-sm">Meera Patil</p>
+                                <p class="counselor-role-sm">Senior Counselor</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="session-card-footer">
+                        <button class="btn btn-sm btn-primary w-100" onclick="window.location.href='counseling-details.html'"><i class="fas fa-eye me-1"></i>View Session Details</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Table View -->
+            <div class="table-view" id="tableView">
+                <div class="sessions-table-card">
+                    <div style="overflow-x: auto;">
+                        <table class="sessions-table">
+                            <thead>
+                                <tr>
+                                    <th>Session ID</th>
+                                    <th>Student Name</th>
+                                    <th>Counselor</th>
+                                    <th>Date & Time</th>
+                                    <th>Mode</th>
+                                    <th>Session Type</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="color: var(--primary); font-weight: 600; cursor: pointer" onclick="window.location.href='counseling-details.html'">#COU-2024-0045</span></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="session-avatar" style="width: 32px; height: 32px; font-size: 12px">RK</div>
+                                            <span>Rajesh Kumar</span>
+                                        </div>
+                                    </td>
+                                    <td>Sarah Patel</td>
+                                    <td>Dec 18 • 10:00 AM</td>
+                                    <td>Online (Zoom)</td>
+                                    <td>First Counseling</td>
+                                    <td><span class="session-status scheduled"><i class="fas fa-circle" style="font-size: 8px"></i>Scheduled</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='counseling-details.html'"><i class="fas fa-eye me-1"></i>Details</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="color: var(--primary); font-weight: 600; cursor: pointer" onclick="window.location.href='counseling-details.html'">#COU-2024-0044</span></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="session-avatar" style="width: 32px; height: 32px; font-size: 12px">PS</div>
+                                            <span>Priya Sharma</span>
+                                        </div>
+                                    </td>
+                                    <td>Rahul Gupta</td>
+                                    <td>Dec 16 • 2:00 PM</td>
+                                    <td>Office - Room 205</td>
+                                    <td>Career Guidance</td>
+                                    <td><span class="session-status ongoing"><i class="fas fa-circle" style="font-size: 8px"></i>Ongoing</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='counseling-details.html'"><i class="fas fa-eye me-1"></i>Details</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="color: var(--primary); font-weight: 600; cursor: pointer" onclick="window.location.href='counseling-details.html'">#COU-2024-0043</span></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="session-avatar" style="width: 32px; height: 32px; font-size: 12px">AV</div>
+                                            <span>Amit Verma</span>
+                                        </div>
+                                    </td>
+                                    <td>Meera Patil</td>
+                                    <td>Dec 15 • 11:00 AM</td>
+                                    <td>Online (Meet)</td>
+                                    <td>Follow-up</td>
+                                    <td><span class="session-status completed"><i class="fas fa-circle" style="font-size: 8px"></i>Completed</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='counseling-details.html'"><i class="fas fa-eye me-1"></i>Details</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Counselor Performance Section -->
+            <div class="performance-section" id="perfView">
+                <div class="performance-header">
                     <div>
-
-                        <div class="stat-label">
-                            Today's Sessions
-                        </div>
-
-                        <div class="stat-value">
-                            8
-                        </div>
-
-                        <div class="stat-small green-text">
-                            <i class="fas fa-arrow-up"></i>
-                            3 scheduled today
-                        </div>
-
+                        <h3 class="headline-sm mb-1"><i class="fas fa-award text-warning me-2"></i>Counselor Performance Monitoring</h3>
+                        <p class="text-muted mb-0">Real-time breakdown of assigned leads, sessions completed, student ratings & conversion rates</p>
                     </div>
-
+                    <button class="btn btn-sm btn-outline-secondary" onclick="alert('Exporting Performance Report...');"><i class="fas fa-download me-1"></i>Export Report</button>
                 </div>
-
-            </div>
-
-
-            <!-- COMPLETED -->
-
-            <div class="counseling-stat">
-
-                <div class="stat-content">
-
-                    <div class="stat-icon icon-green">
-                        <i class="fas fa-check"></i>
-                    </div>
-
-                    <div>
-
-                        <div class="stat-label">
-                            Completed Sessions
-                        </div>
-
-                        <div class="stat-value">
-                            124
-                        </div>
-
-                        <div class="stat-small green-text">
-                            <i class="fas fa-chart-line"></i>
-                            85% completion rate
-                        </div>
-
-                    </div>
-
+                <div style="overflow-x: auto;">
+                    <table class="sessions-table">
+                        <thead>
+                            <tr>
+                                <th>Counselor Name</th>
+                                <th>Designation</th>
+                                <th>Assigned Students</th>
+                                <th>Sessions Conducted</th>
+                                <th>Completion Rate</th>
+                                <th>Avg Rating</th>
+                                <th>Conversion Rate</th>
+                                <th>Performance Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="counselor-avatar-sm" style="background: var(--primary)">SP</div>
+                                        <span class="fw-semibold">Sarah Patel</span>
+                                    </div>
+                                </td>
+                                <td>Senior Counselor</td>
+                                <td>42 Students</td>
+                                <td>38 Sessions</td>
+                                <td><span class="badge bg-success-subtle text-success">90.4%</span></td>
+                                <td><span class="text-warning fw-bold"><i class="fas fa-star me-1"></i>4.9</span> / 5.0</td>
+                                <td><strong class="text-primary">68.2%</strong></td>
+                                <td><span class="badge bg-success text-white">Top Performer</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="counselor-avatar-sm" style="background: var(--info)">RG</div>
+                                        <span class="fw-semibold">Rahul Gupta</span>
+                                    </div>
+                                </td>
+                                <td>Admission Counselor</td>
+                                <td>36 Students</td>
+                                <td>30 Sessions</td>
+                                <td><span class="badge bg-success-subtle text-success">83.3%</span></td>
+                                <td><span class="text-warning fw-bold"><i class="fas fa-star me-1"></i>4.7</span> / 5.0</td>
+                                <td><strong class="text-primary">58.5%</strong></td>
+                                <td><span class="badge bg-info text-white">On Track</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="counselor-avatar-sm" style="background: var(--secondary)">MP</div>
+                                        <span class="fw-semibold">Meera Patil</span>
+                                    </div>
+                                </td>
+                                <td>Senior Counselor</td>
+                                <td>39 Students</td>
+                                <td>35 Sessions</td>
+                                <td><span class="badge bg-success-subtle text-success">89.7%</span></td>
+                                <td><span class="text-warning fw-bold"><i class="fas fa-star me-1"></i>4.8</span> / 5.0</td>
+                                <td><strong class="text-primary">64.1%</strong></td>
+                                <td><span class="badge bg-success text-white">Top Performer</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="counselor-avatar-sm" style="background: var(--warning)">VK</div>
+                                        <span class="fw-semibold">Vikram Kumar</span>
+                                    </div>
+                                </td>
+                                <td>Junior Counselor</td>
+                                <td>28 Students</td>
+                                <td>21 Sessions</td>
+                                <td><span class="badge bg-warning-subtle text-warning">75.0%</span></td>
+                                <td><span class="text-warning fw-bold"><i class="fas fa-star me-1"></i>4.5</span> / 5.0</td>
+                                <td><strong class="text-primary">46.4%</strong></td>
+                                <td><span class="badge bg-warning text-dark">Needs Support</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
-            </div>
-
-
-            <!-- RATING -->
-
-            <div class="counseling-stat">
-
-                <div class="stat-content">
-
-                    <div class="stat-icon icon-orange">
-                        <i class="fas fa-star"></i>
-                    </div>
-
-                    <div>
-
-                        <div class="stat-label">
-                            Avg. Counselor Rating
-                        </div>
-
-                        <div class="stat-value">
-                            4.8 / 5.0
-                        </div>
-
-                        <div class="stat-small green-text">
-                            <i class="fas fa-circle"></i>
-                            High student feedback
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- ACTIVE COUNSELORS -->
-
-            <div class="counseling-stat">
-
-                <div class="stat-content">
-
-                    <div class="stat-icon icon-blue">
-                        <i class="fas fa-users"></i>
-                    </div>
-
-                    <div>
-
-                        <div class="stat-label">
-                            Active Counselors
-                        </div>
-
-                        <div class="stat-value">
-                            8
-                        </div>
-
-                        <div class="stat-small green-text">
-                            <i class="fas fa-circle"></i>
-                            100% capacity
-                        </div>
-
-                    </div>
-
-                </div>
-
             </div>
 
         </div>
-
-
-        <!-- ================= SESSION FILTER ================= -->
-
-        <div class="session-tabs">
-
-            <button type="button" class="session-tab active">
-                All Sessions
-                <span>148</span>
-            </button>
-
-            <button type="button" class="session-tab">
-                Scheduled
-                <span>18</span>
-            </button>
-
-            <button type="button" class="session-tab">
-                Ongoing
-                <span>3</span>
-            </button>
-
-            <button type="button" class="session-tab">
-                Completed
-                <span>124</span>
-            </button>
-
-            <button type="button" class="session-tab">
-                Rescheduled
-                <span>5</span>
-            </button>
-
-        </div>
-
-
-        <!-- ================= SESSION CARDS ================= -->
-
-        <div class="session-grid">
-
-
-            <!-- ================= RAJESH ================= -->
-
-            <div class="session-card">
-
-                <div class="session-top">
-
-                    <span class="session-id">
-                        #COU-2024-0045
-                    </span>
-
-                    <span class="session-status scheduled">
-                        <i class="fas fa-circle"></i>
-                        Scheduled
-                    </span>
-
-                </div>
-
-
-                <div class="student-row">
-
-                    <div class="student-avatar">
-                        RK
-                    </div>
-
-                    <div class="student-info">
-
-                        <h3>
-                            Rajesh Kumar
-                        </h3>
-
-                        <p>
-                            B.Tech Computer Science
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="session-details">
-
-                    <div class="detail-item">
-
-                        <i class="fas fa-calendar"></i>
-
-                        <span>
-                            Dec 18, 2024
-                        </span>
-
-                    </div>
-
-                    <div class="detail-item">
-
-                        <i class="far fa-clock"></i>
-
-                        <span>
-                            10:00 AM - 11:00 AM
-                        </span>
-
-                    </div>
-
-                    <div class="detail-item">
-
-                        <i class="fas fa-video"></i>
-
-                        <span>
-                            Online (Zoom)
-                        </span>
-
-                    </div>
-
-                    <div class="detail-item">
-
-                        <i class="fas fa-tag"></i>
-
-                        <span>
-                            First Counseling
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="counselor-row">
-
-                    <div class="counselor-left">
-
-                        <div class="counselor-avatar">
-                            SP
-                        </div>
-
-                        <div class="counselor-text">
-
-                            <strong>
-                                Sarah Patel
-                            </strong>
-
-                            Senior Counselor
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <button type="button"
-        class="view-session-btn"
-        onclick="window.location.href='<%= ResolveUrl("~/Admin/CounselingDetails.aspx?id=COU-2024-0045") %>';"> 
-
-    <i class="fas fa-eye"></i> 
-    View Session Details 
-
-</button>
-            </div>
-
-
-            <!-- ================= PRIYA ================= -->
-
-            <div class="session-card ongoing">
-
-                <div class="session-top">
-
-                    <span class="session-id">
-                        #COU-2024-0044
-                    </span>
-
-                    <span class="session-status ongoing">
-                        <i class="fas fa-circle"></i>
-                        Ongoing
-                    </span>
-
-                </div>
-
-
-                <div class="student-row">
-
-                    <div class="student-avatar">
-                        PS
-                    </div>
-
-                    <div class="student-info">
-
-                        <h3>
-                            Priya Sharma
-                        </h3>
-
-                        <p>
-                            MBA Finance
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="session-details">
-
-                    <div class="detail-item">
-
-                        <i class="fas fa-calendar"></i>
-
-                        <span>
-                            Dec 16, 2024
-                        </span>
-
-                    </div>
-
-                    <div class="detail-item">
-
-                        <i class="far fa-clock"></i>
-
-                        <span>
-                            2:00 PM - 3:00 PM
-                        </span>
-
-                    </div>
-
-                    <div class="detail-item">
-
-                        <i class="fas fa-building"></i>
-
-                        <span>
-                            Office - Room 205
-                        </span>
-
-                    </div>
-
-                    <div class="detail-item">
-
-                        <i class="fas fa-tag"></i>
-
-                        <span>
-                            Career Guidance
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="counselor-row">
-
-                    <div class="counselor-left">
-
-                        <div class="counselor-avatar">
-                            RG
-                        </div>
-
-                        <div class="counselor-text">
-
-                            <strong>
-                                Rahul Gupta
-                            </strong>
-
-                            Counselor
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-               <button type="button"
-        class="view-session-btn"
-        onclick="window.location.href='<%= ResolveUrl("~/Admin/CounselingDetails.aspx?id=COU-2024-0044") %>';"> 
-
-    <i class="fas fa-eye"></i> 
-    View Session Details 
-
-</button>
-
-            </div>
-
-
-            <!-- ================= AMIT ================= -->
-
-            <div class="session-card completed">
-
-                <div class="session-top">
-
-                    <span class="session-id">
-                        #COU-2024-0043
-                    </span>
-
-                    <span class="session-status completed">
-                        <i class="fas fa-circle"></i>
-                        Completed
-                    </span>
-
-                </div>
-
-
-                <div class="student-row">
-
-                    <div class="student-avatar">
-                        AV
-                    </div>
-
-                    <div class="student-info">
-
-                        <h3>
-                            Amit Verma
-                        </h3>
-
-                        <p>
-                            BCA
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="session-details">
-
-                    <div class="detail-item">
-
-                        <i class="fas fa-calendar"></i>
-
-                        <span>
-                            Dec 15, 2024
-                        </span>
-
-                    </div>
-
-                    <div class="detail-item">
-
-                        <i class="far fa-clock"></i>
-
-                        <span>
-                            11:00 AM - 12:00 PM
-                        </span>
-
-                    </div>
-
-                    <div class="detail-item">
-
-                        <i class="fas fa-video"></i>
-
-                        <span>
-                            Online (Meet)
-                        </span>
-
-                    </div>
-
-                    <div class="detail-item">
-
-                        <i class="fas fa-tag"></i>
-
-                        <span>
-                            Follow-up
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="counselor-row">
-
-                    <div class="counselor-left">
-
-                        <div class="counselor-avatar">
-                            MP
-                        </div>
-
-                        <div class="counselor-text">
-
-                            <strong>
-                                Meera Patel
-                            </strong>
-
-                            Senior Counselor
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <button type="button"
-        class="view-session-btn"
-        onclick="window.location.href='<%= ResolveUrl("~/Admin/CounselingDetails.aspx?id=COU-2024-0043") %>';"> 
-
-    <i class="fas fa-eye"></i> 
-    View Session Details 
-
-</button>
-            </div>
-
-
-        </div>
-
-    </div>
-
+    </main>
+    <script>
+        // Sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.getElementById('mainContent').classList.toggle('sidebar-collapsed');
+        });
+
+        // View Toggles
+        const cardViewBtn = document.getElementById('cardViewBtn');
+        const tableViewBtn = document.getElementById('tableViewBtn');
+        const perfViewBtn = document.getElementById('perfViewBtn');
+
+        const cardView = document.getElementById('cardView');
+        const tableView = document.getElementById('tableView');
+        const perfView = document.getElementById('perfView');
+
+
+        // Cards View
+        cardViewBtn.addEventListener('click', function () {
+
+            cardViewBtn.classList.add('active');
+            tableViewBtn.classList.remove('active');
+            perfViewBtn.classList.remove('active');
+
+            cardView.classList.add('active');
+            tableView.classList.remove('active');
+            perfView.classList.remove('active');
+
+        });
+
+
+        // Table View
+        tableViewBtn.addEventListener('click', function () {
+
+            tableViewBtn.classList.add('active');
+            cardViewBtn.classList.remove('active');
+            perfViewBtn.classList.remove('active');
+
+            tableView.classList.add('active');
+            cardView.classList.remove('active');
+            perfView.classList.remove('active');
+
+        });
+
+
+        // Performance View
+        perfViewBtn.addEventListener('click', function () {
+
+            perfViewBtn.classList.add('active');
+            cardViewBtn.classList.remove('active');
+            tableViewBtn.classList.remove('active');
+
+            perfView.classList.add('active');
+            cardView.classList.remove('active');
+            tableView.classList.remove('active');
+
+        });
+
+        // Add / Edit Modal Functions
+        let isEditMode = false;
+        function openAddCourseModal() {
+            isEditMode = false;
+            document.getElementById('courseModalTitle').innerHTML = `<i class="fas fa-book-open text-primary me-2"></i>Add New Course`;
+            document.getElementById('courseForm').reset();
+            document.getElementById('courseSubmitBtn').innerHTML = `<i class="fas fa-plus me-1"></i> Create Course`;
+            const modal = new bootstrap.Modal(document.getElementById('courseModal'));
+            modal.show();
+        }
+
+        function openEditCourseModal(id, code, name, dept, level, duration, fee, seats) {
+            isEditMode = true;
+            document.getElementById('courseModalTitle').innerHTML = `<i class="fas fa-edit text-primary me-2"></i>Edit Course - ${name}`;
+            document.getElementById('modalCourseCode').value = code;
+            document.getElementById('modalCourseName').value = name;
+            document.getElementById('modalCourseDept').value = dept;
+            document.getElementById('modalCourseLevel').value = level;
+            document.getElementById('modalCourseDuration').value = duration;
+            document.getElementById('modalCourseFee').value = fee;
+            document.getElementById('modalCourseSeats').value = seats;
+            document.getElementById('courseSubmitBtn').innerHTML = `<i class="fas fa-save me-1"></i> Update Course`;
+            const modal = new bootstrap.Modal(document.getElementById('courseModal'));
+            modal.show();
+        }
+
+        function saveCourse(e) {
+            e.preventDefault();
+            const name = document.getElementById('modalCourseName').value;
+            alert(isEditMode ? `Course "${name}" updated successfully!` : `New Course "${name}" added successfully!`);
+            bootstrap.Modal.getInstance(document.getElementById('courseModal')).hide();
+        }
+
+        // Delete Modal Functions
+        let targetDeleteName = '';
+        function openDeleteModal(name) {
+            targetDeleteName = name;
+            document.getElementById('deleteCourseName').innerText = name;
+            const modal = new bootstrap.Modal(document.getElementById('deleteCourseModal'));
+            modal.show();
+        }
+
+        function confirmCourseDelete() {
+            alert(`Course "${targetDeleteName}" has been deleted.`);
+            bootstrap.Modal.getInstance(document.getElementById('deleteCourseModal')).hide();
+        }
+
+        // Activate/Deactivate Toggle
+        function toggleCourseStatus(id, name, checkbox) {
+            const statusBadge = document.getElementById(`cardStatus-${id}`);
+            if (checkbox.checked) {
+                if (statusBadge) statusBadge.className = 'course-status active';
+                if (statusBadge) statusBadge.innerHTML = `<i class="fas fa-circle" style="font-size:6px"></i> Active`;
+                alert(`Course "${name}" activated!`);
+            } else {
+                if (statusBadge) statusBadge.className = 'course-status inactive';
+                if (statusBadge) statusBadge.innerHTML = `<i class="fas fa-circle" style="font-size:6px"></i> Inactive`;
+                alert(`Course "${name}" deactivated!`);
+            }
+        }
+    </script>
 </asp:Content>
